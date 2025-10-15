@@ -75,4 +75,4 @@ graal_dumps/
 # Application specific
 logs/
 *.log
-csak
+/csak

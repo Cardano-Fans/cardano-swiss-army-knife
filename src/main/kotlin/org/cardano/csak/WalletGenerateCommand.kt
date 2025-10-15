@@ -2,6 +2,7 @@ package org.cardano.csak
 
 import com.bloxbean.cardano.client.account.Account
 import com.bloxbean.cardano.client.common.model.Networks
+import com.bloxbean.cardano.client.crypto.KeyGenCborUtil
 import com.bloxbean.cardano.client.util.HexUtil
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
@@ -41,6 +42,10 @@ class WalletGenerateCommand : Callable<Int> {
         val privateKeyHex = HexUtil.encodeHexString(account.privateKeyBytes())
         val publicKeyHex = HexUtil.encodeHexString(account.publicKeyBytes())
 
+        // Get private and public keys as CBOR hex
+        val privateKeyCborHex = KeyGenCborUtil.bytesToCbor(account.privateKeyBytes())
+        val publicKeyCborHex = KeyGenCborUtil.bytesToCbor(account.publicKeyBytes())
+
         // Display results
         println("=".repeat(80))
         println("Cardano Wallet Generated")
@@ -62,8 +67,14 @@ class WalletGenerateCommand : Callable<Int> {
         println("Private Key (hex):")
         println(privateKeyHex)
         println()
+        println("Private Key (CBOR hex):")
+        println(privateKeyCborHex)
+        println()
         println("Public Key (hex):")
         println(publicKeyHex)
+        println()
+        println("Public Key (CBOR hex):")
+        println(publicKeyCborHex)
         println()
         println("=".repeat(80))
         println()

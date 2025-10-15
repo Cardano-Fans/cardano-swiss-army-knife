@@ -12,12 +12,16 @@ import kotlin.system.exitProcess
         "Cardano Swiss Army Knife - A collection of useful Cardano tools.",
         "",
         "Available commands:",
-        "  wallet-generate - Generate a 24-word mnemonic with wallet details",
+        "  wallet-generate        - Generate a 24-word mnemonic with wallet details",
+        "  private-to-public-key  - Extract public key and address from private key",
+        "  blake2b-hash           - Calculate Blake2b hashes from hex string",
         "",
         "Use '<command> --help' for more information about a command."
     ],
     subcommands = [
-        WalletGenerateCommand::class
+        WalletGenerateCommand::class,
+        PrivateToPublicKeyCommand::class,
+        Blake2bHashCommand::class
     ]
 )
 class CsakCLI : Runnable {
