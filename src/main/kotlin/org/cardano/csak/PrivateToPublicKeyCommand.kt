@@ -2,6 +2,7 @@ package org.cardano.csak
 
 import com.bloxbean.cardano.client.address.AddressProvider
 import com.bloxbean.cardano.client.common.model.Networks
+import com.bloxbean.cardano.client.crypto.KeyGenCborUtil
 import com.bloxbean.cardano.client.crypto.KeyGenUtil
 import com.bloxbean.cardano.client.crypto.SecretKey
 import com.bloxbean.cardano.client.crypto.VerificationKey
@@ -14,15 +15,15 @@ import java.util.concurrent.Callable
 @Command(
     name = "private-to-public-key",
     mixinStandardHelpOptions = true,
-    description = ["Extract public key and address from a private key (CBOR hex format)"]
+    description = ["Extract public key and address from a private key"]
 )
 class PrivateToPublicKeyCommand : Callable<Int> {
 
     @Parameters(
         index = "0",
-        description = ["Private key in CBOR hex format (e.g., 5820...)"]
+        description = ["Private key in hex format (plain or CBOR)"]
     )
-    private lateinit var privateKeyCborHex: String
+    private lateinit var privateKeyHex: String
 
     @Option(
         names = ["-n", "--network"],
@@ -30,6 +31,13 @@ class PrivateToPublicKeyCommand : Callable<Int> {
         defaultValue = "mainnet"
     )
     private var network: String = "mainnet"
+
+    @Option(
+        names = ["-f", "--format"],
+        description = ["Input format: cbor (default), hex"],
+        defaultValue = "cbor"
+    )
+    private var format: String = "cbor"
 
     override fun call(): Int {
         try {
@@ -39,6 +47,20 @@ class PrivateToPublicKeyCommand : Callable<Int> {
                 "mainnet" -> true
                 else -> {
                     println("Error: Invalid network. Use 'mainnet' or 'testnet'")
+                    return 1
+                }
+            }
+
+            // Convert to CBOR hex if needed
+            val privateKeyCborHex = when (format.lowercase()) {
+                "hex" -> {
+                    // Convert plain hex to CBOR hex
+                    val bytes = HexUtil.decodeHexString(privateKeyHex)
+                    KeyGenCborUtil.bytesToCbor(bytes)
+                }
+                "cbor" -> privateKeyHex
+                else -> {
+                    println("Error: Invalid format. Use 'cbor' or 'hex'")
                     return 1
                 }
             }
@@ -69,9 +91,10 @@ class PrivateToPublicKeyCommand : Callable<Int> {
             println("=".repeat(80))
             println()
             println("Network: ${network.uppercase()}")
+            println("Input Format: ${format.uppercase()}")
             println()
-            println("Private Key (CBOR hex):")
-            println(privateKeyCborHex)
+            println("Private Key (${if (format.lowercase() == "hex") "hex" else "CBOR hex"}):")
+            println(if (format.lowercase() == "hex") privateKeyHex else privateKeyCborHex)
             println()
             println("Public Key (hex):")
             println(publicKeyHex)
