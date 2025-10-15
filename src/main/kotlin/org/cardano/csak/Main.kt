@@ -12,12 +12,12 @@ import kotlin.system.exitProcess
         "Cardano Swiss Army Knife - A collection of useful Cardano tools.",
         "",
         "Available commands:",
-        "  hello - Say hello",
+        "  wallet-generate - Generate a 24-word mnemonic with wallet details",
         "",
         "Use '<command> --help' for more information about a command."
     ],
     subcommands = [
-        HelloCommand::class
+        WalletGenerateCommand::class
     ]
 )
 class CsakCLI : Runnable {

@@ -23,6 +23,9 @@ dependencies {
     implementation("info.picocli:picocli:4.7.7")
     kapt("info.picocli:picocli-codegen:4.7.7")
 
+    // Cardano Client Library (full module with all submodules)
+    implementation("com.bloxbean.cardano:cardano-client-lib:0.7.0")
+
     // Kotlin standard library
     implementation(kotlin("stdlib"))
 
