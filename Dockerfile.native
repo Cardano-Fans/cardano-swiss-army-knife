@@ -37,19 +37,19 @@ RUN apk add --no-cache libstdc++ gcompat
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 # Copy the native executable from builder stage
-COPY --from=builder /app/build/native/nativeCompile/lil ./lil
+COPY --from=builder /app/build/native/nativeCompile/csak ./csak
 
 # Make it executable
-RUN chmod +x ./lil
+RUN chmod +x ./csak
 
 # Change ownership to non-root user
-RUN chown appuser:appgroup /app/lil
+RUN chown appuser:appgroup /app/csak
 
 # Switch to non-root user
 USER appuser
 
 # Set the entrypoint
-ENTRYPOINT ["/app/lil"]
+ENTRYPOINT ["/app/csak"]
 
 # Default command (can be overridden)
 CMD ["--help"]

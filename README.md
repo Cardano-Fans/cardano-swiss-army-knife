@@ -1,4 +1,4 @@
-# lil - Cardano Swiss Army Knife
+# csak - Cardano Swiss Army Knife
 
 A command-line tool for Cardano utilities built with JDK 24, Kotlin, and GraalVM.
 
@@ -48,12 +48,12 @@ Build a native executable for production use:
 ./native-compile.sh
 ```
 
-This creates a standalone `./lil` binary with no JVM required:
+This creates a standalone `./csak` binary with no JVM required:
 
 ```bash
-./lil --help
-./lil hello
-./lil hello Cardano
+./csak --help
+./csak hello
+./csak hello Cardano
 ```
 
 ### Docker
@@ -62,16 +62,16 @@ Build and run with Docker:
 
 **Native Image (smallest size, fastest startup):**
 ```bash
-docker build -f Dockerfile.native -t lil:native .
-docker run --rm lil:native --help
-docker run --rm lil:native hello Cardano
+docker build -f Dockerfile.native -t csak:native .
+docker run --rm csak:native --help
+docker run --rm csak:native hello Cardano
 ```
 
 **JVM Version:**
 ```bash
-docker build -f Dockerfile.jvm -t lil:jvm .
-docker run --rm lil:jvm --help
-docker run --rm lil:jvm hello Cardano
+docker build -f Dockerfile.jvm -t csak:jvm .
+docker run --rm csak:jvm --help
+docker run --rm csak:jvm hello Cardano
 ```
 
 ## Build Targets
@@ -89,7 +89,7 @@ docker run --rm lil:jvm hello Cardano
 │       └── kotlin/
 │           └── org/
 │               └── cardano/
-│                   └── lil/
+│                   └── csak/
 │                       ├── Main.kt          # Main CLI entry point
 │                       └── HelloCommand.kt  # Example command
 ├── build.gradle.kts                         # Gradle build configuration
@@ -103,10 +103,10 @@ docker run --rm lil:jvm hello Cardano
 
 ## Adding New Commands
 
-1. Create a new command class in `src/main/kotlin/org/cardano/lil/`:
+1. Create a new command class in `src/main/kotlin/org/cardano/csak/`:
 
 ```kotlin
-package org.cardano.lil
+package org.cardano.csak
 
 import picocli.CommandLine.Command
 import java.util.concurrent.Callable

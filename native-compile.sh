@@ -20,20 +20,20 @@ echo ""
 echo "Copying native executable to root folder..."
 
 # Copy executable to root
-cp ./build/native/nativeCompile/lil ./lil
+cp ./build/native/nativeCompile/csak ./csak
 
 # Ensure it's executable
-chmod +x ./lil
+chmod +x ./csak
 
 echo ""
 echo "======================================================================="
 echo "Native compilation successful!"
 echo "======================================================================="
 echo ""
-echo "Executable location: ./lil"
+echo "Executable location: ./csak"
 echo ""
 echo "Test it with:"
-echo "  ./lil --version"
-echo "  ./lil hello"
-echo "  ./lil hello Cardano"
+echo "  ./csak --version"
+echo "  ./csak hello"
+echo "  ./csak hello Cardano"
 echo ""

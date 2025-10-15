@@ -27,7 +27,7 @@ WORKDIR /app
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 # Copy the built application from builder stage
-COPY --from=builder /app/build/install/lil ./
+COPY --from=builder /app/build/install/csak ./
 
 # Change ownership to non-root user
 RUN chown -R appuser:appgroup /app
@@ -36,7 +36,7 @@ RUN chown -R appuser:appgroup /app
 USER appuser
 
 # Set the entrypoint
-ENTRYPOINT ["/app/bin/lil"]
+ENTRYPOINT ["/app/bin/csak"]
 
 # Default command (can be overridden)
 CMD ["--help"]

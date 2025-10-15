@@ -1,13 +1,13 @@
-package org.cardano.lil
+package org.cardano.csak
 
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import kotlin.system.exitProcess
 
 @Command(
-    name = "lil",
+    name = "csak",
     mixinStandardHelpOptions = true,
-    version = ["lil 1.0.0"],
+    version = ["csak 1.0.0"],
     description = [
         "Cardano Swiss Army Knife - A collection of useful Cardano tools.",
         "",
@@ -20,7 +20,7 @@ import kotlin.system.exitProcess
         HelloCommand::class
     ]
 )
-class LilCLI : Runnable {
+class CsakCLI : Runnable {
 
     @CommandLine.Spec
     private lateinit var spec: CommandLine.Model.CommandSpec
@@ -32,7 +32,7 @@ class LilCLI : Runnable {
 }
 
 fun main(args: Array<String>) {
-    val commandLine = CommandLine(LilCLI())
+    val commandLine = CommandLine(CsakCLI())
 
     // If no arguments provided, show help
     if (args.isEmpty()) {

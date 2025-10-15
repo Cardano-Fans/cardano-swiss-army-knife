@@ -31,7 +31,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("org.cardano.lil.MainKt")
+    mainClass.set("org.cardano.csak.MainKt")
 }
 
 tasks.test {
@@ -62,8 +62,8 @@ kapt {
 graalvmNative {
     binaries {
         named("main") {
-            imageName.set("lil")
-            mainClass.set("org.cardano.lil.MainKt")
+            imageName.set("csak")
+            mainClass.set("org.cardano.csak.MainKt")
 
             buildArgs.add("--verbose")
             buildArgs.add("--no-fallback")
