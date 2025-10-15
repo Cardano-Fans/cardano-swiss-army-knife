@@ -1,0 +1,47 @@
+# Multi-stage build for JVM-based Docker image
+
+# Build stage
+FROM gradle:8.14.3-jdk24 AS builder
+
+WORKDIR /app
+
+# Copy Gradle files first for better layer caching
+COPY build.gradle.kts settings.gradle.kts gradle.properties ./
+COPY gradle ./gradle
+
+# Download dependencies (this layer will be cached if dependencies don't change)
+RUN gradle dependencies --no-daemon || true
+
+# Copy source code
+COPY src ./src
+
+# Build the application
+RUN gradle installDist --no-daemon
+
+# Runtime stage
+FROM eclipse-temurin:24-jre-alpine
+
+WORKDIR /app
+
+# Create a non-root user for security
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+# Copy the built application from builder stage
+COPY --from=builder /app/build/install/lil ./
+
+# Change ownership to non-root user
+RUN chown -R appuser:appgroup /app
+
+# Switch to non-root user
+USER appuser
+
+# Set the entrypoint
+ENTRYPOINT ["/app/bin/lil"]
+
+# Default command (can be overridden)
+CMD ["--help"]
+
+# Metadata
+LABEL maintainer="Cardano Swiss Army Knife"
+LABEL version="1.0.0"
+LABEL description="Cardano Swiss Army Knife - JVM version"

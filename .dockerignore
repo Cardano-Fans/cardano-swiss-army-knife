@@ -1,0 +1,22 @@
+# Gradle
+.gradle/
+build/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Local builds
+lil
+
+# Documentation
+*.md
+
+# Other
+.env
+*.log
