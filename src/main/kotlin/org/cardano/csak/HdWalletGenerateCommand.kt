@@ -22,7 +22,19 @@ class HdWalletGenerateCommand : Callable<Int> {
     )
     private var network: String = "mainnet"
 
+    @Option(
+        names = ["-c", "--count"],
+        description = ["Number of derivation paths to generate (default: 1)"],
+        defaultValue = "1"
+    )
+    private var count: Int = 1
+
     override fun call(): Int {
+        // Validate count
+        if (count < 1) {
+            println("Error: Count must be at least 1")
+            return 1
+        }
         // Create account based on network
         val account = when (network.lowercase()) {
             "testnet" -> Account(Networks.testnet())
@@ -48,19 +60,22 @@ class HdWalletGenerateCommand : Callable<Int> {
         println("-".repeat(80))
         println()
 
-        // Display root account (index 0)
-        println("Root Account (index=0):")
-        println("-".repeat(80))
-        displayAccountInfo(account, 0)
+        // Display accounts based on count
+        for (index in 0 until count) {
+            if (index > 0) {
+                println()
+            }
 
-        // Display derived accounts (index 1-10)
-        for (index in 1..10) {
-            println()
-            println("Derived Account (index=$index):")
+            val accountLabel = if (index == 0) "Account" else "Derived Account"
+            println("$accountLabel (index=$index):")
             println("-".repeat(80))
 
-            // Create derived account at index
-            val derivedAccount = Account(account.mnemonic(), index)
+            // Create account at index
+            val derivedAccount = if (index == 0) {
+                account
+            } else {
+                Account(account.mnemonic(), index)
+            }
             displayAccountInfo(derivedAccount, index)
         }
 
@@ -75,6 +90,10 @@ class HdWalletGenerateCommand : Callable<Int> {
     }
 
     private fun displayAccountInfo(account: Account, index: Int) {
+        // Cardano derivation paths (CIP-1852)
+        val paymentPath = "m/1852'/1815'/$index'/0/0"
+        val stakingPath = "m/1852'/1815'/$index'/2/0"
+
         // Get addresses
         val baseAddress = account.baseAddress()
         val stakeAddress = account.stakeAddress()
@@ -87,6 +106,10 @@ class HdWalletGenerateCommand : Callable<Int> {
         val privateKeyCborHex = KeyGenCborUtil.bytesToCbor(account.privateKeyBytes())
         val publicKeyCborHex = KeyGenCborUtil.bytesToCbor(account.publicKeyBytes())
 
+        println("  Derivation Paths (CIP-1852):")
+        println("    Payment: $paymentPath")
+        println("    Staking: $stakingPath")
+        println()
         println("  Base Address (Bech32):")
         println("    $baseAddress")
         println()
