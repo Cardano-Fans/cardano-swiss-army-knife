@@ -25,7 +25,8 @@ import kotlin.system.exitProcess
         "  conversion-time-to-slot    - Convert UTC time to slot number",
         "  conversion-slot-to-epoch   - Convert slot number to epoch number",
         "  conversion-epoch-to-slot   - Convert epoch number to slot number",
-        "  cardano-hardforks          - Display Cardano hard forks and era transitions",
+        "  cardano-eras               - Display Cardano eras and transitions",
+        "  cardano-hardforks          - Display Cardano hard forks (including intra-era)",
         "",
         "Use '<command> --help' for more information about a command."
     ],
@@ -43,6 +44,7 @@ import kotlin.system.exitProcess
         ConversionTimeToSlotCommand::class,
         ConversionSlotToEpochCommand::class,
         ConversionEpochToSlotCommand::class,
+        CardanoErasCommand::class,
         CardanoHardforksCommand::class
     ]
 )

@@ -1,7 +1,6 @@
 package org.cardano.csak
 
 import org.cardanofoundation.conversions.ClasspathConversionsFactory
-import org.cardanofoundation.conversions.domain.EraType
 import org.cardanofoundation.conversions.domain.NetworkType
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
@@ -11,7 +10,7 @@ import java.util.concurrent.Callable
 @Command(
     name = "cardano-hardforks",
     mixinStandardHelpOptions = true,
-    description = ["Display information about Cardano hard forks and era transitions"]
+    description = ["Display information about Cardano hard forks (including intra-era forks)"]
 )
 class CardanoHardforksCommand : Callable<Int> {
 
@@ -37,85 +36,75 @@ class CardanoHardforksCommand : Callable<Int> {
 
             // Create converters
             val converters = ClasspathConversionsFactory.createConverters(networkType)
-            val eraConversions = converters.era()
             val genesisConfig = converters.genesisConfig()
+            val eraHistory = genesisConfig.eraHistory
 
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
             // Display header
             println("=".repeat(80))
-            println("Cardano Hard Forks & Era Transitions")
+            println("Cardano Hard Forks")
             println("=".repeat(80))
             println()
             println("Network: ${network.uppercase()}")
             println()
+            println("Hard forks represent protocol upgrades on the Cardano blockchain.")
+            println("This includes both era transitions and intra-era hard forks.")
+            println()
 
-            // List of eras to display
-            val eras = listOf(
-                EraType.Byron,
-                EraType.Shelley,
-                EraType.Allegra,
-                EraType.Mary,
-                EraType.Alonzo,
-                EraType.Babbage,
-                EraType.Conway
-            )
+            println("Hard Fork Timeline:")
+            println("-".repeat(80))
+            println()
 
-            for (era in eras) {
-                try {
-                    println("${era.name} Era:")
-                    println("-".repeat(80))
+            println("Era transitions represent major hard forks:")
+            println("  Byron → Shelley: Shelley HF")
+            println("  Shelley → Allegra: Allegra HF")
+            println("  Allegra → Mary: Mary HF")
+            println("  Mary → Alonzo: Alonzo HF")
+            println("  Alonzo → Babbage: Vasil HF")
+            println("  Babbage → Conway: Chang HF")
+            println()
 
-                    // First real slot
-                    val firstSlot = eraConversions.firstRealSlot(era)
-                    println("  First Slot: $firstSlot")
+            // Display known mainnet intra-era hard forks
+            if (networkType == NetworkType.MAINNET) {
+                println("Known Intra-Era Hard Forks (Mainnet):")
+                println("-".repeat(80))
+                println()
 
-                    // First time
-                    val firstTime = eraConversions.firstRealEraTime(era)
-                    println("  Start Time: ${firstTime.format(formatter)}")
+                // Alonzo intra-era hard fork
+                println("Alonzo Intra-Era HF (Epoch 290 → 290):")
+                println("  Date: September 12, 2021")
+                println("  Description: Alonzo launch - Smart contracts enabled")
+                println("  Slot: 39916800")
+                println()
 
-                    // Last slot (if available)
-                    val lastSlotOpt = eraConversions.lastRealSlot(era)
-                    if (lastSlotOpt.isPresent) {
-                        println("  Last Slot: ${lastSlotOpt.get()}")
+                // Vasil hard fork (Babbage era start)
+                println("Vasil HF (Epoch 364 → 365):")
+                println("  Date: September 22, 2022")
+                println("  Description: Babbage era - Plutus V2, reference inputs, inline datums")
+                println("  Slot: 72316800")
+                println()
 
-                        val lastTimeOpt = eraConversions.lastRealEraTime(era)
-                        if (lastTimeOpt.isPresent) {
-                            println("  End Time: ${lastTimeOpt.get().format(formatter)}")
-                        }
-                    } else {
-                        println("  Last Slot: Current era (ongoing)")
-                        println("  End Time: N/A (current era)")
-                    }
+                // Valentine (SECP256k1) intra-era hard fork in Babbage
+                println("Valentine Intra-Era HF (Epoch 394):")
+                println("  Date: February 14, 2023")
+                println("  Description: SECP256k1 support, Plutus V2 enhancements")
+                println("  Occurred within Babbage era")
+                println()
 
-                    println()
-                } catch (e: Exception) {
-                    // Era might not exist on this network
-                    println("  Not available on ${network.uppercase()}")
-                    println()
-                }
+                // Chang hard fork #1 (Conway era start)
+                println("Chang HF #1 (Epoch 506 → 507):")
+                println("  Date: September 1, 2024")
+                println("  Description: Conway era - Voltaire governance phase begins")
+                println("  Slot: 133660800")
+                println()
             }
 
-            // Additional genesis information
-            println("Genesis Information:")
-            println("-".repeat(80))
-            println("  Byron Start Time: ${genesisConfig.startTime.format(formatter)}")
-            println("  Shelley Start Time: ${genesisConfig.shelleyStartTime.format(formatter)}")
-            println("  First Shelley Slot: ${genesisConfig.firstShelleySlot()}")
-            println("  Last Byron Slot: ${genesisConfig.lastByronSlot()}")
+            println("=".repeat(80))
             println()
-
-            println("Slot Duration:")
-            println("-".repeat(80))
-            println("  Byron Slot Length: ${genesisConfig.byronSlotLength.seconds} seconds")
-            println("  Shelley Slot Length: ${genesisConfig.shelleySlotLength.seconds} seconds")
+            println("Note: Intra-era hard forks are protocol upgrades that occur within")
+            println("      the same era without changing the ledger era type.")
             println()
-
-            println("Epoch Length:")
-            println("-".repeat(80))
-            println("  Shelley Epoch Length: ${genesisConfig.shelleyEpochLength} slots")
-            println()
-
             println("=".repeat(80))
 
             return 0

@@ -29,13 +29,6 @@ class ConversionEpochToTimeCommand : Callable<Int> {
     )
     private var network: String = "mainnet"
 
-    @Option(
-        names = ["-o", "--offset"],
-        description = ["Epoch offset: start (default), end"],
-        defaultValue = "start"
-    )
-    private var offset: String = "start"
-
     override fun call(): Int {
         try {
             // Parse network type
@@ -49,29 +42,19 @@ class ConversionEpochToTimeCommand : Callable<Int> {
                 }
             }
 
-            // Parse offset
-            val epochOffset = when (offset.lowercase()) {
-                "start" -> EpochOffset.START
-                "end" -> EpochOffset.END
-                else -> {
-                    println("Error: Invalid offset. Use 'start' or 'end'")
-                    return 1
-                }
-            }
-
             // Create converters
             val converters = ClasspathConversionsFactory.createConverters(networkType)
             val epochConversions = converters.epoch()
 
-            // Convert epoch to time
-            val utcTime = epochConversions.epochToUTCTime(epochNumber.toInt(), epochOffset)
+            // Get both start and end times
+            val startTime = epochConversions.epochToUTCTime(epochNumber.toInt(), EpochOffset.START)
+            val endTime = epochConversions.epochToUTCTime(epochNumber.toInt(), EpochOffset.END)
 
-            // Also get slot information
-            val slot = epochConversions.epochToAbsoluteSlot(epochNumber.toInt(), epochOffset)
+            val startSlot = epochConversions.epochToAbsoluteSlot(epochNumber.toInt(), EpochOffset.START)
+            val endSlot = epochConversions.epochToAbsoluteSlot(epochNumber.toInt(), EpochOffset.END)
 
             // Format output
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-            val formattedTime = utcTime.format(formatter)
 
             // Display results
             println("=".repeat(80))
@@ -79,15 +62,21 @@ class ConversionEpochToTimeCommand : Callable<Int> {
             println("=".repeat(80))
             println()
             println("Network: ${network.uppercase()}")
-            println("Epoch: $epochNumber (${offset.lowercase()})")
+            println("Epoch: $epochNumber")
             println()
-            println("UTC Time:")
+            println("Start Time:")
             println("-".repeat(80))
-            println(formattedTime)
+            println(startTime.format(formatter))
+            println("Slot: $startSlot")
+            println("ISO: $startTime")
             println()
-            println("Absolute Slot: $slot")
+            println("End Time:")
+            println("-".repeat(80))
+            println(endTime.format(formatter))
+            println("Slot: $endSlot")
+            println("ISO: $endTime")
             println()
-            println("ISO Format: ${utcTime}")
+            println("Duration: ${endSlot - startSlot + 1} slots")
             println()
             println("=".repeat(80))
 
