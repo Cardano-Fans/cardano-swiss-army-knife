@@ -61,6 +61,20 @@ class CardanoErasCommand : Callable<Int> {
                 EraType.Conway
             )
 
+            // Find the current (last) era
+            var currentEra: EraType? = null
+            for (era in eras.reversed()) {
+                try {
+                    val lastSlotOpt = eraConversions.lastRealSlot(era)
+                    if (!lastSlotOpt.isPresent) {
+                        currentEra = era
+                        break
+                    }
+                } catch (e: Exception) {
+                    // Era doesn't exist, continue
+                }
+            }
+
             for (era in eras) {
                 try {
                     println("${era.name} Era:")
@@ -83,7 +97,7 @@ class CardanoErasCommand : Callable<Int> {
                         if (lastTimeOpt.isPresent) {
                             println("  End Time: ${lastTimeOpt.get().format(formatter)}")
                         }
-                    } else {
+                    } else if (era == currentEra) {
                         println("  Last Slot: Current era (ongoing)")
                         println("  End Time: N/A (current era)")
                     }
