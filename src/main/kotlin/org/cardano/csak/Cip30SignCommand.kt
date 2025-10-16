@@ -188,7 +188,7 @@ class Cip30SignCommand : Callable<Int> {
                 println()
                 println("Usage:")
                 println("To verify this signature, use:")
-                println("  csak cip30-verify ${dataSignature.signature()} ${dataSignature.key()}")
+                println("  csak cip30-verify ${dataSignature.signature()} -k ${dataSignature.key()}")
                 println()
                 println("=".repeat(80))
 
@@ -246,7 +246,7 @@ class Cip30SignCommand : Callable<Int> {
             println()
             println("Usage:")
             println("To verify this signature, use:")
-            println("  csak cip30-verify ${dataSignature.signature()} ${dataSignature.key()}")
+            println("  csak cip30-verify ${dataSignature.signature()} -k ${dataSignature.key()}")
             println()
             println("=".repeat(80))
 
