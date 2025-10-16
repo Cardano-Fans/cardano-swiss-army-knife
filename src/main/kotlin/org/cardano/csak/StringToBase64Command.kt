@@ -1,20 +1,20 @@
 package org.cardano.csak
 
-import com.bloxbean.cardano.client.util.HexUtil
 import picocli.CommandLine.Command
 import picocli.CommandLine.Parameters
+import java.util.Base64
 import java.util.concurrent.Callable
 
 @Command(
-    name = "util-string-to-hex",
+    name = "util-string-to-base64",
     mixinStandardHelpOptions = true,
-    description = ["Convert a string to hex format (UTF-8 encoding)"]
+    description = ["Convert a UTF-8 string to Base64 format"]
 )
-class StringToHexCommand : Callable<Int> {
+class StringToBase64Command : Callable<Int> {
 
     @Parameters(
         index = "0",
-        description = ["Input string to convert to hex"]
+        description = ["Input string to convert to Base64"]
     )
     private lateinit var inputString: String
 
@@ -23,19 +23,19 @@ class StringToHexCommand : Callable<Int> {
             // Convert string to bytes using UTF-8 encoding
             val bytes = inputString.toByteArray(Charsets.UTF_8)
 
-            // Convert bytes to hex
-            val hexString = HexUtil.encodeHexString(bytes)
+            // Encode to Base64
+            val base64String = Base64.getEncoder().encodeToString(bytes)
 
             // Display results
             println("=".repeat(80))
-            println("String to Hex Conversion")
+            println("String to Base64 Conversion")
             println("=".repeat(80))
             println()
             println("Input String:")
             println(inputString)
             println()
-            println("Hex Output:")
-            println(hexString)
+            println("Base64 Output:")
+            println(base64String)
             println()
             println("Byte Length: ${bytes.size}")
             println()

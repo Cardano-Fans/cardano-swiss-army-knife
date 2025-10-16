@@ -41,8 +41,10 @@ A command-line tool for Cardano utilities built with JDK 24, Kotlin, and GraalVM
 - `cardano-hardforks` - Display hard fork events (including intra-era forks)
 
 ### Utilities
-- `string-to-hex` - Convert UTF-8 strings to hexadecimal format
-- `hex-to-string` - Convert hexadecimal to UTF-8 strings
+- `util-string-to-hex` - Convert UTF-8 strings to hexadecimal format
+- `util-hex-to-string` - Convert hexadecimal to UTF-8 strings
+- `util-string-to-base64` - Convert UTF-8 strings to Base64 format
+- `util-base64-to-string` - Convert Base64 to UTF-8 strings
 
 For detailed usage examples and workflows, see [USAGE.md](USAGE.md).
 
@@ -91,7 +93,10 @@ cd cardano-swiss-army-knife
 ./csak blake2b-hash 48656c6c6f20576f726c64
 
 # Convert string to hex
-./csak string-to-hex "Hello Cardano"
+./csak util-string-to-hex "Hello Cardano"
+
+# Convert string to Base64
+./csak util-string-to-base64 "Hello Cardano"
 ```
 
 See [USAGE.md](USAGE.md) for comprehensive examples and workflows.

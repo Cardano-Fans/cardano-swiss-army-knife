@@ -6,7 +6,7 @@ import picocli.CommandLine.Parameters
 import java.util.concurrent.Callable
 
 @Command(
-    name = "hex-to-string",
+    name = "util-hex-to-string",
     mixinStandardHelpOptions = true,
     description = ["Convert a hex string to UTF-8 string format"]
 )

@@ -24,6 +24,8 @@ This guide provides detailed usage examples for all `csak` commands.
 - [Utility Commands](#utility-commands)
   - [String to Hex Conversion](#string-to-hex-conversion)
   - [Hex to String Conversion](#hex-to-string-conversion)
+  - [String to Base64 Conversion](#string-to-base64-conversion)
+  - [Base64 to String Conversion](#base64-to-string-conversion)
 - [Common Workflows](#common-workflows)
 
 ---
@@ -999,7 +1001,7 @@ Convert UTF-8 strings to hexadecimal format.
 #### Command
 
 ```bash
-csak string-to-hex <STRING>
+csak util-string-to-hex <STRING>
 ```
 
 #### Options
@@ -1011,13 +1013,13 @@ csak string-to-hex <STRING>
 ##### Convert simple strings
 
 ```bash
-csak string-to-hex "Hello World"
+csak util-string-to-hex "Hello World"
 ```
 
 ##### Convert for use with blake2b-hash
 
 ```bash
-csak string-to-hex "Cardano"
+csak util-string-to-hex "Cardano"
 ```
 
 ##### Output Example
@@ -1054,7 +1056,7 @@ Convert hexadecimal strings back to UTF-8 text.
 #### Command
 
 ```bash
-csak hex-to-string <HEX_STRING>
+csak util-hex-to-string <HEX_STRING>
 ```
 
 #### Options
@@ -1070,13 +1072,13 @@ csak hex-to-string <HEX_STRING>
 ##### Convert hex to string
 
 ```bash
-csak hex-to-string 48656c6c6f20576f726c64
+csak util-hex-to-string 48656c6c6f20576f726c64
 ```
 
 ##### With whitespace (automatically cleaned)
 
 ```bash
-csak hex-to-string "48 65 6c 6c 6f 20 57 6f 72 6c 64"
+csak util-hex-to-string "48 65 6c 6c 6f 20 57 6f 72 6c 64"
 ```
 
 ##### Output Example
@@ -1120,6 +1122,139 @@ Common issues:
 
 ---
 
+### String to Base64 Conversion
+
+Convert UTF-8 strings to Base64 format.
+
+#### Command
+
+```bash
+csak util-string-to-base64 <STRING>
+```
+
+#### Options
+
+- `-h, --help` - Show help message
+
+#### Parameters
+
+- `<STRING>` - The UTF-8 string to convert to Base64
+
+#### Examples
+
+##### Convert simple strings
+
+```bash
+csak util-string-to-base64 "Hello World"
+```
+
+##### Convert for encoding data
+
+```bash
+csak util-string-to-base64 "Cardano blockchain"
+```
+
+##### Output Example
+
+```
+================================================================================
+String to Base64 Conversion
+================================================================================
+
+Input String:
+Hello World
+
+Base64 Output:
+SGVsbG8gV29ybGQ=
+
+Byte Length: 11
+
+================================================================================
+```
+
+#### Use Cases
+
+- Encode data for transmission
+- Prepare data for JSON/XML embedding
+- Encode binary data as text
+- API authentication tokens
+- Data serialization
+
+---
+
+### Base64 to String Conversion
+
+Convert Base64 strings back to UTF-8 text.
+
+#### Command
+
+```bash
+csak util-base64-to-string <BASE64_STRING>
+```
+
+#### Options
+
+- `-h, --help` - Show help message
+
+#### Parameters
+
+- `<BASE64_STRING>` - The Base64 string to convert (whitespace is automatically removed)
+
+#### Examples
+
+##### Convert Base64 to string
+
+```bash
+csak util-base64-to-string SGVsbG8gV29ybGQ=
+```
+
+##### With whitespace (automatically cleaned)
+
+```bash
+csak util-base64-to-string "SGVs bG8g V29y bGQ="
+```
+
+##### Output Example
+
+```
+================================================================================
+Base64 to String Conversion
+================================================================================
+
+Input Base64:
+SGVsbG8gV29ybGQ=
+
+UTF-8 String Output:
+Hello World
+
+Byte Length: 11
+
+================================================================================
+```
+
+#### Use Cases
+
+- Decode Base64-encoded data
+- Parse API responses
+- Decode authentication tokens
+- Extract embedded data from JSON/XML
+- Reverse Base64 encoding operations
+
+#### Error Handling
+
+If the Base64 string is invalid:
+
+```
+Error: Invalid Base64 string format
+```
+
+Common issues:
+- Non-Base64 characters in input
+- Invalid padding
+- Corrupted Base64 data
+
+---
+
 ## Common Workflows
 
 ### Workflow 1: Generate and Verify a Wallet
@@ -1140,7 +1275,7 @@ csak private-to-public-key <private_key_cbor> -n testnet
 
 ```bash
 # Step 1: Convert string to hex
-csak string-to-hex "MyMetadata"
+csak util-string-to-hex "MyMetadata"
 
 # Step 2: Hash the hex output
 csak blake2b-hash <hex_output_from_step1>
@@ -1149,7 +1284,7 @@ csak blake2b-hash <hex_output_from_step1>
 Example:
 ```bash
 # Get hex
-HEX=$(csak string-to-hex "Cardano" | grep "Hex Output:" -A 1 | tail -1)
+HEX=$(csak util-string-to-hex "Cardano" | grep "Hex Output:" -A 1 | tail -1)
 
 # Hash it
 csak blake2b-hash $HEX
@@ -1248,8 +1383,10 @@ csak cardano-eras --help
 csak cardano-hardforks --help
 
 # Utilities
-csak string-to-hex --help
-csak hex-to-string --help
+csak util-string-to-hex --help
+csak util-hex-to-string --help
+csak util-string-to-base64 --help
+csak util-base64-to-string --help
 ```
 
 ## Version Information
