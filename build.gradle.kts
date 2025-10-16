@@ -26,6 +26,9 @@ dependencies {
     // Cardano Client Library (full module with all submodules)
     implementation("com.bloxbean.cardano:cardano-client-lib:0.7.0")
 
+    // CIP-30 Data Signature Parser
+    implementation("org.cardanofoundation:cip30-data-signature-parser:0.0.12")
+
     // SLF4J logging
     implementation("org.slf4j:slf4j-api:2.0.16")
     implementation("org.slf4j:slf4j-simple:2.0.16")

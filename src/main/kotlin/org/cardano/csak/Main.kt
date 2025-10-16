@@ -18,6 +18,7 @@ import kotlin.system.exitProcess
         "  blake2b-hash           - Calculate Blake2b hashes from hex string",
         "  string-to-hex          - Convert a string to hex format",
         "  hex-to-string          - Convert a hex string to UTF-8 format",
+        "  cip30-verify           - Verify and parse CIP-30 data signatures",
         "",
         "Use '<command> --help' for more information about a command."
     ],
@@ -27,7 +28,8 @@ import kotlin.system.exitProcess
         PrivateToPublicKeyCommand::class,
         Blake2bHashCommand::class,
         StringToHexCommand::class,
-        HexToStringCommand::class
+        HexToStringCommand::class,
+        Cip30VerifyCommand::class
     ]
 )
 class CsakCLI : Runnable {
