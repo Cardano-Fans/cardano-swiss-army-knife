@@ -10,6 +10,7 @@ This guide provides detailed usage examples for all `csak` commands.
   - [Private to Public Key Conversion](#private-to-public-key-conversion)
 - [Cryptographic Operations](#cryptographic-operations)
   - [Blake2b Hashing](#blake2b-hashing)
+  - [CIP-30 Data Signing](#cip-30-data-signing)
   - [CIP-30 Signature Verification](#cip-30-signature-verification)
 - [Time & Epoch Conversions](#time--epoch-conversions)
   - [Epoch to Time Conversion](#epoch-to-time-conversion)
@@ -356,6 +357,117 @@ Blake2b-256 (32 bytes):
 - Verify data integrity
 - Create script hashes
 - General cryptographic hashing
+
+---
+
+### CIP-30 Data Signing
+
+Sign data using the CIP-30 standard for wallet message signing. Supports both software wallet (full payload) and hardware wallet (hashed payload) modes.
+
+#### Command
+
+```bash
+csak cip30-sign [OPTIONS] <MESSAGE> <PRIVATE_KEY>
+```
+
+#### Options
+
+- `-n, --network <NETWORK>` - Network type: `mainnet` (default), `testnet`, `preprod`, `preview`
+- `--hashed` - Hash the payload before signing (for hardware wallets like Ledger/Trezor)
+- `-a, --address <ADDRESS>` - Address to use for signing (optional, derived from private key if not provided)
+- `-h, --help` - Show help message
+
+#### Parameters
+
+- `<MESSAGE>` - Message to sign (UTF-8 string)
+- `<PRIVATE_KEY>` - Private key in hex format (32 or 64 bytes)
+
+#### Examples
+
+##### Sign with software wallet mode (full payload)
+
+```bash
+# Sign a message with a private key
+csak cip30-sign "Hello Cardano" 884728da33f13706de4d85fd86d3a3e8bcaa1d71547be1a7b0fb9ed346280c44b175e1687b4beb270e89d60616b1d242c20cf96e6695791a7572fb71d5683841 --network testnet
+```
+
+##### Sign with hardware wallet mode (hashed payload)
+
+```bash
+# Sign with hashed payload for hardware wallet compatibility
+csak cip30-sign "Hello Cardano" 884728da33f13706de4d85fd86d3a3e8bcaa1d71547be1a7b0fb9ed346280c44b175e1687b4beb270e89d60616b1d242c20cf96e6695791a7572fb71d5683841 --network testnet --hashed
+```
+
+##### Sign with specific address
+
+```bash
+# Use a specific address for signing
+csak cip30-sign "Hello Cardano" <private_key> -a addr_test1qp5umtjq9gg9gw63f50gl3g4m7xk26dl94z2zdtpc7trjp... --network testnet
+```
+
+##### Output Example
+
+```
+================================================================================
+CIP-30 Data Signature
+================================================================================
+
+Message:
+Hello Cardano
+
+Message (hex):
+48656c6c6f2043617264616e6f
+
+Address:
+addr_test1qp5umtjq9gg9gw63f50gl3g4m7xk26dl94z2zdtpc7trjp...
+
+Signature Mode:
+Full payload (Software Wallet)
+
+CIP-30 Signature (hex):
+845846a201276761646472657373583900327d065c4c135860b9ac6a758c9ef032100...
+
+CIP-30 Key (hex):
+a4010103272006215820097c8507b71063f99e38147f09eacf76f25576a2ddfac2f...
+
+Network: TESTNET
+
+================================================================================
+
+Usage:
+To verify this signature, use:
+  csak cip30-verify 845846a201... a4010103...
+
+================================================================================
+```
+
+#### Use Cases
+
+- Sign messages for wallet authentication
+- Create proofs of wallet ownership
+- Sign data for DApp interactions
+- Generate signatures for off-chain verification
+- Test CIP-30 wallet implementations
+
+#### Signing Modes
+
+**Software Wallet Mode (default):**
+- Full message payload is included in the signature
+- Compatible with browser wallets (Nami, Eternl, etc.)
+- Message is directly visible in the signature
+
+**Hardware Wallet Mode (`--hashed`):**
+- Message is hashed (Blake2b-224) before signing
+- Required for Ledger and Trezor hardware wallets
+- More compact signature format
+- Hardware wallet devices show hash instead of full message
+
+#### Security Notes
+
+- Never share your private keys
+- Verify the address matches your wallet before signing
+- Hardware wallet mode is recommended for production use
+- Always verify signatures after creation
 
 ---
 
@@ -1368,6 +1480,7 @@ csak private-to-public-key --help
 
 # Cryptographic Operations
 csak blake2b-hash --help
+csak cip30-sign --help
 csak cip30-verify --help
 
 # Time & Epoch Conversions

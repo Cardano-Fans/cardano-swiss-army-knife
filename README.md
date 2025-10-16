@@ -26,6 +26,7 @@ A command-line tool for Cardano utilities built with JDK 24, Kotlin, and GraalVM
 
 ### Cryptographic Operations
 - `blake2b-hash` - Calculate Blake2b hashes (160/224/256-bit) from hex input
+- `cip30-sign` - Sign data using CIP-30 standard (wallet message signing)
 - `cip30-verify` - Verify and parse CIP-30 data signatures (wallet message signing)
 
 ### Time & Epoch Conversions
