@@ -4,34 +4,52 @@ This guide provides detailed usage examples for all `csak` commands.
 
 ## Table of Contents
 
-- [HD Wallet Generation](#hd-wallet-generation)
-- [Private to Public Key Conversion](#private-to-public-key-conversion)
-- [Blake2b Hashing](#blake2b-hashing)
-- [String to Hex Conversion](#string-to-hex-conversion)
+- [Wallet & Key Management](#wallet--key-management)
+  - [HD Wallet Generation](#hd-wallet-generation)
+  - [HD Wallet Restore](#hd-wallet-restore)
+  - [Private to Public Key Conversion](#private-to-public-key-conversion)
+- [Cryptographic Operations](#cryptographic-operations)
+  - [Blake2b Hashing](#blake2b-hashing)
+  - [CIP-30 Signature Verification](#cip-30-signature-verification)
+- [Time & Epoch Conversions](#time--epoch-conversions)
+  - [Epoch to Time Conversion](#epoch-to-time-conversion)
+  - [Time to Epoch Conversion](#time-to-epoch-conversion)
+  - [Slot to Time Conversion](#slot-to-time-conversion)
+  - [Time to Slot Conversion](#time-to-slot-conversion)
+  - [Slot to Epoch Conversion](#slot-to-epoch-conversion)
+  - [Epoch to Slot Conversion](#epoch-to-slot-conversion)
+- [Blockchain Information](#blockchain-information)
+  - [Cardano Eras](#cardano-eras)
+  - [Cardano Hard Forks](#cardano-hard-forks)
+- [Utility Commands](#utility-commands)
+  - [String to Hex Conversion](#string-to-hex-conversion)
+  - [Hex to String Conversion](#hex-to-string-conversion)
 - [Common Workflows](#common-workflows)
 
 ---
 
-## HD Wallet Generation
+## Wallet & Key Management
+
+### HD Wallet Generation
 
 Generate hierarchical deterministic (HD) wallets following BIP32/BIP39/CIP-1852 standards.
 
-### Command
+#### Command
 
 ```bash
 csak hd-wallet-generate [OPTIONS]
 ```
 
-### Options
+##### Options
 
 - `-n, --network <NETWORK>` - Network type: `mainnet` (default) or `testnet`
 - `-c, --count <COUNT>` - Number of derivation paths to generate (default: 1)
 - `-h, --help` - Show help message
 - `-V, --version` - Show version
 
-### Examples
+##### Examples
 
-#### Generate a single wallet (default)
+##### Generate a single wallet (default)
 
 ```bash
 csak hd-wallet-generate --network testnet
@@ -45,7 +63,7 @@ Output includes:
 - Private key (hex and CBOR hex)
 - Public key (hex and CBOR hex)
 
-#### Generate multiple derivation paths
+##### Generate multiple derivation paths
 
 ```bash
 # Generate 5 accounts
@@ -60,7 +78,7 @@ This generates accounts at indices 0-4 (or 0-9), each with their own:
 - Unique addresses
 - Unique key pairs
 
-#### Output Example
+##### Output Example
 
 ```
 ================================================================================
@@ -97,7 +115,7 @@ Account (index=0):
     58201a9f48df8c097ec07215e5527227d4842a01e434b74982f3582b...
 ```
 
-### Security Notes
+#### Security Notes
 
 - **NEVER share your mnemonic or private keys**
 - Store the mnemonic in a secure location (preferably offline)
@@ -106,45 +124,146 @@ Account (index=0):
 
 ---
 
-## Private to Public Key Conversion
+### HD Wallet Restore
+
+Restore and validate HD wallets from existing mnemonic phrases (15 or 24 words).
+
+#### Command
+
+```bash
+csak hd-wallet-restore [OPTIONS] <MNEMONIC_WORDS>
+```
+
+##### Options
+
+- `-n, --network <NETWORK>` - Network type: `mainnet` (default) or `testnet`
+- `-i, --index <INDEX>` - Account index to restore (default: 0)
+- `-h, --help` - Show help message
+
+##### Examples
+
+##### Restore a 24-word wallet
+
+```bash
+csak hd-wallet-restore --network testnet word1 word2 word3 ... word24
+```
+
+##### Restore a 15-word wallet
+
+```bash
+csak hd-wallet-restore --network mainnet word1 word2 word3 ... word15
+```
+
+##### Restore a specific account index
+
+```bash
+# Restore account at index 5
+csak hd-wallet-restore -n testnet -i 5 word1 word2 ... word24
+```
+
+##### Output Example
+
+```
+================================================================================
+HD Wallet Restored
+================================================================================
+
+Network: TESTNET
+Mnemonic Word Count: 24
+Account Index: 0
+
+Mnemonic Validation:
+--------------------------------------------------------------------------------
+✓ Mnemonic is VALID (checksum verified)
+
+Account (index=0):
+--------------------------------------------------------------------------------
+  Derivation Paths (CIP-1852):
+    Payment: m/1852'/1815'/0'/0/0
+    Staking: m/1852'/1815'/0'/2/0
+
+  Base Address (Bech32):
+    addr_test1qp5umtjq9gg9gw63f50gl3g4m7xk26dl94z2zdtpc7trjp...
+
+  Stake Address (Bech32):
+    stake_test1ur6ndadd22cadytkzw2jqgct9sfxznds8mnx7u63l6u0j6...
+
+  Private Key (hex):
+    884728da33f13706de4d85fd86d3a3e8bcaa1d71547be1a7b0fb9ed3...
+  Private Key (CBOR hex):
+    5840884728da33f13706de4d85fd86d3a3e8bcaa1d71547be1a7b0fb...
+
+  Public Key (hex):
+    1a9f48df8c097ec07215e5527227d4842a01e434b74982f3582b1b27...
+  Public Key (CBOR hex):
+    58201a9f48df8c097ec07215e5527227d4842a01e434b74982f3582b...
+================================================================================
+```
+
+##### Use Cases
+
+- Restore wallets from backup mnemonics
+- Validate mnemonic checksums
+- Import wallets from other tools or wallets
+- Recover access to funds with saved mnemonics
+- Verify mnemonic phrase integrity
+
+#### Error Handling
+
+If the mnemonic is invalid:
+
+```
+Error: Invalid mnemonic phrase
+Reason: Checksum validation failed
+```
+
+Common issues:
+- Wrong word count (must be 15 or 24)
+- Misspelled words (not in BIP39 wordlist)
+- Wrong word order
+- Invalid checksum
+
+---
+
+### Private to Public Key Conversion
 
 Extract public key and address from a private key.
 
-### Command
+#### Command
 
 ```bash
 csak private-to-public-key [OPTIONS] <PRIVATE_KEY>
 ```
 
-### Options
+#### Options
 
 - `-n, --network <NETWORK>` - Network type: `mainnet` (default) or `testnet`
 - `-f, --format <FORMAT>` - Input format: `cbor` (default) or `hex`
 - `-h, --help` - Show help message
 
-### Examples
+#### Examples
 
-#### Using CBOR format (default)
+##### Using CBOR format (default)
 
 ```bash
 # CBOR hex starts with 5840 (64-byte private key)
 csak private-to-public-key 5840884728da33f13706de4d85fd86d3a3e8bcaa1d71547be1a7b0fb9ed346280c44b175e1687b4beb270e89d60616b1d242c20cf96e6695791a7572fb71d5683841 --network testnet
 ```
 
-#### Using plain hex format
+##### Using plain hex format
 
 ```bash
 # Plain 64-byte hex (128 characters)
 csak private-to-public-key 884728da33f13706de4d85fd86d3a3e8bcaa1d71547be1a7b0fb9ed346280c44b175e1687b4beb270e89d60616b1d242c20cf96e6695791a7572fb71d5683841 --format hex --network testnet
 ```
 
-#### Short form
+##### Short form
 
 ```bash
 csak private-to-public-key <key> -f hex -n testnet
 ```
 
-#### Output Example
+##### Output Example
 
 ```
 ================================================================================
@@ -166,7 +285,7 @@ addr_test1vz0c54svgvp6uj5uu5jx79jytzethmuk0ddtgt07dzr28zcgl9lt0
 ================================================================================
 ```
 
-### Use Cases
+#### Use Cases
 
 - Derive public information from stored private keys
 - Verify key pairs
@@ -175,36 +294,38 @@ addr_test1vz0c54svgvp6uj5uu5jx79jytzethmuk0ddtgt07dzr28zcgl9lt0
 
 ---
 
-## Blake2b Hashing
+## Cryptographic Operations
+
+### Blake2b Hashing
 
 Calculate Blake2b hashes (160, 224, and 256-bit) from hex input.
 
-### Command
+#### Command
 
 ```bash
 csak blake2b-hash <HEX_INPUT>
 ```
 
-### Options
+#### Options
 
 - `-h, --help` - Show help message
 
-### Examples
+#### Examples
 
-#### Hash a hex string
+##### Hash a hex string
 
 ```bash
 # Example: "Hello World" in hex
 csak blake2b-hash 48656c6c6f20576f726c64
 ```
 
-#### Hash a public key
+##### Hash a public key
 
 ```bash
 csak blake2b-hash 1a9f48df8c097ec07215e5527227d4842a01e434b74982f3582b1b272b2fe506
 ```
 
-#### Output Example
+##### Output Example
 
 ```
 ================================================================================
@@ -226,7 +347,7 @@ Blake2b-256 (32 bytes):
 ================================================================================
 ```
 
-### Use Cases
+#### Use Cases
 
 - Compute address hashes
 - Generate payment credential hashes
@@ -236,35 +357,670 @@ Blake2b-256 (32 bytes):
 
 ---
 
-## String to Hex Conversion
+### CIP-30 Signature Verification
+
+Verify and parse CIP-30 data signatures from Cardano wallets (software and hardware wallets).
+
+#### Command
+
+```bash
+csak cip30-verify [OPTIONS] <CIP30_DATA_SIGNATURE> [PUBLIC_KEY]
+```
+
+#### Options
+
+- `-h, --help` - Show help message
+
+#### Parameters
+
+- `<CIP30_DATA_SIGNATURE>` - The CIP-30 signature hex string (required)
+- `[PUBLIC_KEY]` - Optional public key hex string for verification
+
+#### Examples
+
+##### Verify a software wallet signature
+
+```bash
+csak cip30-verify 845846a2012...
+```
+
+##### Verify with explicit public key
+
+```bash
+csak cip30-verify 845846a2012... a401022001215820abcd...
+```
+
+##### Output Example
+
+```
+================================================================================
+CIP-30 Signature Verification
+================================================================================
+
+Signature Valid: ✓ YES
+
+Address (from signature):
+addr_test1qz8f8w7nzqaypv00tpc96mvn5...
+
+Message (original):
+Hello Cardano!
+
+Message (hex):
+48656c6c6f20436172646e6f21
+
+Signature Type:
+NO (Software Wallet - direct message signing)
+
+Public Key (Ed25519):
+a401022001215820abcd1234...
+
+Signature (Ed25519):
+58405820def456789abcdef0...
+
+COSE Payload:
+a266686173686564f4...
+
+================================================================================
+```
+
+##### Hardware Wallet Signature Example
+
+When verifying a signature from a hardware wallet (Ledger, Trezor):
+
+```
+Signature Type:
+✓ YES (Hardware Wallet - message was hashed before signing)
+```
+
+#### Use Cases
+
+- Verify wallet message signatures
+- Authenticate wallet ownership
+- Validate signed data from DApps
+- Detect hardware wallet signatures
+- Parse CIP-30 COSE structures
+- Implement wallet connect workflows
+
+#### CIP-30 Background
+
+CIP-30 defines the standard for wallet message signing on Cardano. Key features:
+
+- **COSE Format**: Signatures use CBOR Object Signing and Encryption
+- **Hardware Wallet Detection**: The `isHashed` flag indicates if message was pre-hashed
+- **Ed25519 Signatures**: Standard Cardano signature algorithm
+- **Address Binding**: Signatures include the signing address
+
+---
+
+## Time & Epoch Conversions
+
+All conversion commands support three Cardano networks: mainnet, preprod, and preview.
+
+### Epoch to Time Conversion
+
+Convert a Cardano epoch number to UTC time, showing both epoch start and end times.
+
+#### Command
+
+```bash
+csak conversion-epoch-to-time [OPTIONS] <EPOCH_NUMBER>
+```
+
+#### Options
+
+- `-n, --network <NETWORK>` - Network type: `mainnet` (default), `preprod`, `preview`
+- `-h, --help` - Show help message
+
+#### Parameters
+
+- `<EPOCH_NUMBER>` - The epoch number to convert
+
+#### Examples
+
+##### Convert mainnet epoch
+
+```bash
+csak conversion-epoch-to-time 450
+```
+
+##### Convert preprod epoch
+
+```bash
+csak conversion-epoch-to-time --network preprod 150
+```
+
+##### Output Example
+
+```
+================================================================================
+Epoch to Time Conversion
+================================================================================
+
+Network: MAINNET
+Epoch: 450
+
+Start Time:
+--------------------------------------------------------------------------------
+2024-01-15 21:44:51
+Slot: 112132800
+ISO: 2024-01-15T21:44:51Z
+
+End Time:
+--------------------------------------------------------------------------------
+2024-01-20 21:44:50
+Slot: 112564799
+ISO: 2024-01-20T21:44:50Z
+
+Duration: 432000 slots
+
+================================================================================
+```
+
+#### Use Cases
+
+- Calculate epoch boundaries for stake snapshots
+- Determine epoch start/end for rewards calculation
+- Plan protocol parameter updates
+- Schedule blockchain events by epoch
+
+---
+
+### Time to Epoch Conversion
+
+Convert UTC time to a Cardano epoch number.
+
+#### Command
+
+```bash
+csak conversion-time-to-epoch [OPTIONS] <UTC_TIME>
+```
+
+#### Options
+
+- `-n, --network <NETWORK>` - Network type: `mainnet` (default), `preprod`, `preview`
+- `-h, --help` - Show help message
+
+#### Parameters
+
+- `<UTC_TIME>` - UTC time in ISO-8601 format (e.g., `2024-01-15T21:44:51Z`)
+
+#### Examples
+
+##### Convert time to epoch
+
+```bash
+csak conversion-time-to-epoch "2024-01-15T21:44:51Z"
+```
+
+##### With network specification
+
+```bash
+csak conversion-time-to-epoch -n preprod "2024-03-01T00:00:00Z"
+```
+
+##### Output Example
+
+```
+================================================================================
+Time to Epoch Conversion
+================================================================================
+
+Network: MAINNET
+Input Time: 2024-01-15T21:44:51Z
+
+Epoch Number: 450
+
+Epoch Start: 2024-01-15 21:44:51
+Epoch End: 2024-01-20 21:44:50
+
+================================================================================
+```
+
+#### Use Cases
+
+- Determine which epoch a transaction occurred in
+- Calculate epoch for historical events
+- Find epoch boundaries for time ranges
+
+---
+
+### Slot to Time Conversion
+
+Convert an absolute slot number to UTC time with full epoch context.
+
+#### Command
+
+```bash
+csak conversion-slot-to-time [OPTIONS] <SLOT_NUMBER>
+```
+
+#### Options
+
+- `-n, --network <NETWORK>` - Network type: `mainnet` (default), `preprod`, `preview`
+- `-h, --help` - Show help message
+
+#### Parameters
+
+- `<SLOT_NUMBER>` - The absolute slot number to convert
+
+#### Examples
+
+##### Convert mainnet slot
+
+```bash
+csak conversion-slot-to-time 112132800
+```
+
+##### Convert preview slot
+
+```bash
+csak conversion-slot-to-time -n preview 50000000
+```
+
+##### Output Example
+
+```
+================================================================================
+Slot to Time Conversion
+================================================================================
+
+Network: MAINNET
+Absolute Slot: 112132800
+
+Slot Time:
+--------------------------------------------------------------------------------
+2024-01-15 21:44:51
+ISO: 2024-01-15T21:44:51Z
+
+Epoch Information:
+--------------------------------------------------------------------------------
+Epoch Number: 450
+
+Epoch Start:
+  Time: 2024-01-15 21:44:51
+  Slot: 112132800
+
+Epoch End:
+  Time: 2024-01-20 21:44:50
+  Slot: 112564799
+
+Position in Epoch:
+  Slot 1 of 432000
+
+================================================================================
+```
+
+#### Use Cases
+
+- Convert transaction slots to human-readable times
+- Determine block timestamps
+- Calculate time until slot deadline
+- Understand slot position within epoch
+
+---
+
+### Time to Slot Conversion
+
+Convert UTC time to an absolute slot number.
+
+#### Command
+
+```bash
+csak conversion-time-to-slot [OPTIONS] <UTC_TIME>
+```
+
+#### Options
+
+- `-n, --network <NETWORK>` - Network type: `mainnet` (default), `preprod`, `preview`
+- `-h, --help` - Show help message
+
+#### Parameters
+
+- `<UTC_TIME>` - UTC time in ISO-8601 format
+
+#### Examples
+
+```bash
+csak conversion-time-to-slot "2024-01-15T21:44:51Z"
+```
+
+##### Output Example
+
+```
+================================================================================
+Time to Slot Conversion
+================================================================================
+
+Network: MAINNET
+Input Time: 2024-01-15T21:44:51Z
+
+Absolute Slot: 112132800
+Epoch: 450
+
+================================================================================
+```
+
+#### Use Cases
+
+- Calculate slot numbers for transaction scheduling
+- Determine slot from block timestamp
+- Convert time constraints to slot constraints
+
+---
+
+### Slot to Epoch Conversion
+
+Convert an absolute slot number to an epoch number.
+
+#### Command
+
+```bash
+csak conversion-slot-to-epoch [OPTIONS] <SLOT_NUMBER>
+```
+
+#### Options
+
+- `-n, --network <NETWORK>` - Network type: `mainnet` (default), `preprod`, `preview`
+- `-h, --help` - Show help message
+
+#### Parameters
+
+- `<SLOT_NUMBER>` - The absolute slot number
+
+#### Examples
+
+```bash
+csak conversion-slot-to-epoch 112132800
+```
+
+##### Output Example
+
+```
+================================================================================
+Slot to Epoch Conversion
+================================================================================
+
+Network: MAINNET
+Slot: 112132800
+
+Epoch Number: 450
+
+================================================================================
+```
+
+#### Use Cases
+
+- Quick slot to epoch lookup
+- Batch processing of slot data
+- Epoch filtering for analytics
+
+---
+
+### Epoch to Slot Conversion
+
+Convert an epoch number to the first absolute slot of that epoch.
+
+#### Command
+
+```bash
+csak conversion-epoch-to-slot [OPTIONS] <EPOCH_NUMBER>
+```
+
+#### Options
+
+- `-n, --network <NETWORK>` - Network type: `mainnet` (default), `preprod`, `preview`
+- `-h, --help` - Show help message
+
+#### Parameters
+
+- `<EPOCH_NUMBER>` - The epoch number
+
+#### Examples
+
+```bash
+csak conversion-epoch-to-slot 450
+```
+
+##### Output Example
+
+```
+================================================================================
+Epoch to Slot Conversion
+================================================================================
+
+Network: MAINNET
+Epoch: 450
+
+Start Slot: 112132800
+End Slot: 112564799
+
+Duration: 432000 slots
+
+================================================================================
+```
+
+#### Use Cases
+
+- Find epoch boundaries in slot numbers
+- Calculate slot ranges for epochs
+- Epoch-based data querying
+
+---
+
+## Blockchain Information
+
+### Cardano Eras
+
+Display comprehensive information about Cardano blockchain eras and their transitions.
+
+#### Command
+
+```bash
+csak cardano-eras [OPTIONS]
+```
+
+#### Options
+
+- `-n, --network <NETWORK>` - Network type: `mainnet` (default), `preprod`, `preview`
+- `-h, --help` - Show help message
+
+#### Examples
+
+##### View mainnet eras
+
+```bash
+csak cardano-eras
+```
+
+##### View preprod eras
+
+```bash
+csak cardano-eras --network preprod
+```
+
+##### Output Example
+
+```
+================================================================================
+Cardano Eras Information
+================================================================================
+
+Network: MAINNET
+
+Byron Era:
+--------------------------------------------------------------------------------
+  First Slot: 0
+  Start Time: 2017-09-23 21:44:51
+  Last Slot: 4492799
+  End Time: 2020-07-29 21:44:51
+
+Shelley Era:
+--------------------------------------------------------------------------------
+  First Slot: 4492800
+  Start Time: 2020-07-29 21:44:51
+  Last Slot: 16588799
+  End Time: 2020-12-16 21:44:51
+
+...
+
+Conway Era:
+--------------------------------------------------------------------------------
+  First Slot: 133660800
+  Start Time: 2024-09-01 21:44:51
+  Last Slot: Current era (ongoing)
+  End Time: N/A (current era)
+
+Genesis Information:
+--------------------------------------------------------------------------------
+  Byron Start Time: 2017-09-23 21:44:51
+  Shelley Start Time: 2020-07-29 21:44:51
+  First Shelley Slot: 4492800
+  Last Byron Slot: 4492799
+
+Slot Duration:
+--------------------------------------------------------------------------------
+  Byron Slot Length: 20 seconds
+  Shelley Slot Length: 1 seconds
+
+Epoch Length:
+--------------------------------------------------------------------------------
+  Shelley Epoch Length: 432000 slots
+
+================================================================================
+```
+
+#### Use Cases
+
+- Understand Cardano's evolution timeline
+- Identify which era a slot/epoch belongs to
+- Study era transition points
+- Educational purposes for Cardano architecture
+
+---
+
+### Cardano Hard Forks
+
+Display information about Cardano hard fork events, including both inter-era and intra-era hard forks.
+
+#### Command
+
+```bash
+csak cardano-hardforks [OPTIONS]
+```
+
+#### Options
+
+- `-n, --network <NETWORK>` - Network type: `mainnet` (default), `preprod`, `preview`
+- `-h, --help` - Show help message
+
+#### Examples
+
+##### View mainnet hard forks
+
+```bash
+csak cardano-hardforks
+```
+
+##### Output Example
+
+```
+================================================================================
+Cardano Hard Forks
+================================================================================
+
+Network: MAINNET
+
+Hard forks represent protocol upgrades on the Cardano blockchain.
+This includes both era transitions and intra-era hard forks.
+
+Hard Fork Timeline:
+--------------------------------------------------------------------------------
+
+Era transitions represent major hard forks:
+  Byron → Shelley: Shelley HF
+  Shelley → Allegra: Allegra HF
+  Allegra → Mary: Mary HF
+  Mary → Alonzo: Alonzo HF
+  Alonzo → Babbage: Vasil HF
+  Babbage → Conway: Chang HF
+
+Known Intra-Era Hard Forks (Mainnet):
+--------------------------------------------------------------------------------
+
+Alonzo Intra-Era HF (Epoch 290 → 290):
+  Date: September 12, 2021
+  Description: Alonzo launch - Smart contracts enabled
+  Slot: 39916800
+
+Vasil HF (Epoch 364 → 365):
+  Date: September 22, 2022
+  Description: Babbage era - Plutus V2, reference inputs, inline datums
+  Slot: 72316800
+
+Valentine Intra-Era HF (Epoch 394):
+  Date: February 14, 2023
+  Description: SECP256k1 support, Plutus V2 enhancements
+  Occurred within Babbage era
+
+Chang HF #1 (Epoch 506 → 507):
+  Date: September 1, 2024
+  Description: Conway era - Voltaire governance phase begins
+  Slot: 133660800
+
+================================================================================
+
+Note: Intra-era hard forks are protocol upgrades that occur within
+      the same era without changing the ledger era type.
+
+================================================================================
+```
+
+#### Use Cases
+
+- Understand Cardano protocol upgrade history
+- Identify when features were enabled (smart contracts, Plutus V2, etc.)
+- Distinguish between era transitions and intra-era upgrades
+- Plan for future hard forks
+- Educational purposes for Cardano governance
+
+#### Hard Fork Types
+
+- **Inter-Era Hard Forks**: Transition between ledger eras (e.g., Shelley → Allegra)
+- **Intra-Era Hard Forks**: Protocol upgrades within the same era (e.g., Valentine, Chang #1)
+
+---
+
+## Utility Commands
+
+### String to Hex Conversion
 
 Convert UTF-8 strings to hexadecimal format.
 
-### Command
+#### Command
 
 ```bash
 csak string-to-hex <STRING>
 ```
 
-### Options
+#### Options
 
 - `-h, --help` - Show help message
 
-### Examples
+#### Examples
 
-#### Convert simple strings
+##### Convert simple strings
 
 ```bash
 csak string-to-hex "Hello World"
 ```
 
-#### Convert for use with blake2b-hash
+##### Convert for use with blake2b-hash
 
 ```bash
 csak string-to-hex "Cardano"
 ```
 
-#### Output Example
+##### Output Example
 
 ```
 ================================================================================
@@ -282,12 +1038,85 @@ Byte Length: 11
 ================================================================================
 ```
 
-### Use Cases
+#### Use Cases
 
 - Prepare strings for hashing
 - Convert metadata to hex
 - Encode messages for on-chain storage
 - Debug UTF-8 encoding issues
+
+---
+
+### Hex to String Conversion
+
+Convert hexadecimal strings back to UTF-8 text.
+
+#### Command
+
+```bash
+csak hex-to-string <HEX_STRING>
+```
+
+#### Options
+
+- `-h, --help` - Show help message
+
+#### Parameters
+
+- `<HEX_STRING>` - The hexadecimal string to convert (whitespace is automatically removed)
+
+#### Examples
+
+##### Convert hex to string
+
+```bash
+csak hex-to-string 48656c6c6f20576f726c64
+```
+
+##### With whitespace (automatically cleaned)
+
+```bash
+csak hex-to-string "48 65 6c 6c 6f 20 57 6f 72 6c 64"
+```
+
+##### Output Example
+
+```
+================================================================================
+Hex to String Conversion
+================================================================================
+
+Input Hex:
+48656c6c6f20576f726c64
+
+UTF-8 String:
+Hello World
+
+Byte Length: 11
+
+================================================================================
+```
+
+#### Use Cases
+
+- Decode hex-encoded metadata
+- Read on-chain stored messages
+- Debug hex data
+- Reverse string-to-hex operations
+- Parse transaction metadata
+
+#### Error Handling
+
+If the hex string is invalid:
+
+```
+Error: Invalid hex string. Must contain only hexadecimal characters (0-9, a-f, A-F)
+```
+
+Common issues:
+- Non-hex characters in input
+- Odd number of hex characters (must be even)
+- Invalid UTF-8 byte sequences
 
 ---
 
@@ -394,11 +1223,33 @@ echo "Generated testnet address: $ADDRESS"
 For command-specific help:
 
 ```bash
+# General help
 csak --help
+
+# Wallet & Key Management
 csak hd-wallet-generate --help
+csak hd-wallet-restore --help
 csak private-to-public-key --help
+
+# Cryptographic Operations
 csak blake2b-hash --help
+csak cip30-verify --help
+
+# Time & Epoch Conversions
+csak conversion-epoch-to-time --help
+csak conversion-time-to-epoch --help
+csak conversion-slot-to-time --help
+csak conversion-time-to-slot --help
+csak conversion-slot-to-epoch --help
+csak conversion-epoch-to-slot --help
+
+# Blockchain Information
+csak cardano-eras --help
+csak cardano-hardforks --help
+
+# Utilities
 csak string-to-hex --help
+csak hex-to-string --help
 ```
 
 ## Version Information
@@ -411,7 +1262,34 @@ csak --version
 
 ## Additional Resources
 
+### Cardano Standards
+
 - [CIP-1852: HD Wallets for Cardano](https://cips.cardano.org/cips/cip1852/)
+- [CIP-30: Cardano dApp-Wallet Web Bridge](https://cips.cardano.org/cips/cip30/)
+- [Cardano Improvement Proposals (CIPs)](https://cips.cardano.org/)
+
+### Cryptographic Standards
+
 - [BIP32: Hierarchical Deterministic Wallets](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki)
 - [BIP39: Mnemonic Code for Generating Deterministic Keys](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki)
 - [Blake2b Hashing Algorithm](https://www.blake2.net/)
+- [Ed25519 Signatures](https://ed25519.cr.yp.to/)
+- [COSE: CBOR Object Signing and Encryption](https://datatracker.ietf.org/doc/html/rfc8152)
+
+### Libraries Used
+
+- [Cardano Client Library (Java)](https://github.com/bloxbean/cardano-client-lib)
+- [CIP-30 Data Signature Parser](https://github.com/cardano-foundation/cip30-data-signature-parser)
+- [Cardano Conversions Library](https://github.com/cardano-foundation/cf-cardano-conversions-java)
+
+### Cardano Documentation
+
+- [Cardano Developer Portal](https://developers.cardano.org/)
+- [Cardano Docs](https://docs.cardano.org/)
+- [Cardano Ledger Specifications](https://github.com/IntersectMBO/cardano-ledger)
+
+---
+
+**Project**: [cardano-swiss-army-knife](https://github.com/Cardano-Fans/cardano-swiss-army-knife)
+
+**License**: Apache 2.0

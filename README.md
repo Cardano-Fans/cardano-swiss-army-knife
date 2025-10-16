@@ -5,10 +5,12 @@ A command-line tool for Cardano utilities built with JDK 24, Kotlin, and GraalVM
 ## Features
 
 - **Cardano Client Library Integration**: Full integration with cardano-client-lib 0.7.0
-- **HD Wallet Generation**: Generate hierarchical deterministic wallets with BIP32/BIP39/CIP-1852 derivation paths
+- **HD Wallet Management**: Generate and restore HD wallets with BIP32/BIP39/CIP-1852 derivation paths
 - **Key Management**: Convert between private and public keys, support for both hex and CBOR formats
-- **Cryptographic Hashing**: Blake2b hashing (160, 224, 256-bit) for Cardano operations
-- **Utility Functions**: String to hex conversion and more
+- **Cryptographic Operations**: Blake2b hashing (160, 224, 256-bit) and CIP-30 signature verification
+- **Time & Epoch Conversions**: Convert between epochs, slots, and UTC time for all networks
+- **Blockchain Information**: View Cardano eras, hard forks, and network genesis data
+- **Utility Functions**: String/hex conversions and more
 - **JDK 24 + Kotlin 2.2.0**: Modern language features and performance
 - **GraalVM Native Image**: Fast startup, low memory footprint, single executable
 - **PicoCLI**: Elegant command-line interface with help and auto-completion
@@ -17,10 +19,30 @@ A command-line tool for Cardano utilities built with JDK 24, Kotlin, and GraalVM
 
 ## Commands
 
+### Wallet & Key Management
 - `hd-wallet-generate` - Generate HD wallets with mnemonic and derivation paths (CIP-1852)
+- `hd-wallet-restore` - Restore and validate HD wallets from 15 or 24-word mnemonics
 - `private-to-public-key` - Extract public key and address from private key (hex or CBOR format)
+
+### Cryptographic Operations
 - `blake2b-hash` - Calculate Blake2b hashes (160/224/256-bit) from hex input
+- `cip30-verify` - Verify and parse CIP-30 data signatures (wallet message signing)
+
+### Time & Epoch Conversions
+- `conversion-epoch-to-time` - Convert epoch number to UTC time (with start/end)
+- `conversion-time-to-epoch` - Convert UTC time to epoch number
+- `conversion-slot-to-time` - Convert slot number to UTC time (with epoch context)
+- `conversion-time-to-slot` - Convert UTC time to slot number
+- `conversion-slot-to-epoch` - Convert slot number to epoch number
+- `conversion-epoch-to-slot` - Convert epoch number to slot number
+
+### Blockchain Information
+- `cardano-eras` - Display Cardano eras and their transitions
+- `cardano-hardforks` - Display hard fork events (including intra-era forks)
+
+### Utilities
 - `string-to-hex` - Convert UTF-8 strings to hexadecimal format
+- `hex-to-string` - Convert hexadecimal to UTF-8 strings
 
 For detailed usage examples and workflows, see [USAGE.md](USAGE.md).
 
