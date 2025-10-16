@@ -29,6 +29,9 @@ A command-line tool for Cardano utilities built with JDK 24, Kotlin, and GraalVM
 - `cip30-sign` - Sign data using CIP-30 standard (wallet message signing)
 - `cip30-verify` - Verify and parse CIP-30 data signatures (wallet message signing)
 
+### Transaction Operations
+- `tx-hash` - Calculate transaction hash from transaction CBOR bytes
+
 ### Time & Epoch Conversions
 - `conversion-epoch-to-time` - Convert epoch number to UTC time (with start/end)
 - `conversion-time-to-epoch` - Convert UTC time to epoch number
@@ -92,6 +95,9 @@ cd cardano-swiss-army-knife
 
 # Calculate Blake2b hashes
 ./csak blake2b-hash 48656c6c6f20576f726c64
+
+# Calculate transaction hash from CBOR
+./csak tx-hash 84a8008482582003c5d1951fa6e1aa...
 
 # Convert string to hex
 ./csak util-string-to-hex "Hello Cardano"

@@ -12,6 +12,8 @@ This guide provides detailed usage examples for all `csak` commands.
   - [Blake2b Hashing](#blake2b-hashing)
   - [CIP-30 Data Signing](#cip-30-data-signing)
   - [CIP-30 Signature Verification](#cip-30-signature-verification)
+- [Transaction Operations](#transaction-operations)
+  - [Transaction Hash Calculation](#transaction-hash-calculation)
 - [Time & Epoch Conversions](#time--epoch-conversions)
   - [Epoch to Time Conversion](#epoch-to-time-conversion)
   - [Time to Epoch Conversion](#time-to-epoch-conversion)
@@ -563,6 +565,95 @@ CIP-30 defines the standard for wallet message signing on Cardano. Key features:
 - **Hardware Wallet Detection**: The `isHashed` flag indicates if message was pre-hashed
 - **Ed25519 Signatures**: Standard Cardano signature algorithm
 - **Address Binding**: Signatures include the signing address
+
+---
+
+## Transaction Operations
+
+### Transaction Hash Calculation
+
+Calculate the transaction hash from transaction CBOR bytes. This is useful for verifying transaction IDs or calculating hashes for transactions obtained from various sources.
+
+#### Command
+
+```bash
+csak tx-hash <TX_CBOR>
+```
+
+#### Options
+
+- `-h, --help` - Show help message
+
+#### Parameters
+
+- `<TX_CBOR>` - Transaction CBOR bytes in hexadecimal format (whitespace is automatically removed)
+
+#### Examples
+
+##### Calculate transaction hash from CBOR
+
+```bash
+# Example with a real transaction CBOR
+csak tx-hash 84a8008482582003c5d1951fa6e1aa9f6d41dcee053d9e031487f1156eabb1ebb99166cd80394a03...
+```
+
+##### With whitespace (automatically cleaned)
+
+```bash
+# Whitespace in the CBOR string is automatically removed
+csak tx-hash "84a800 8482 5820 03c5..."
+```
+
+#### Output Example
+
+```
+================================================================================
+Transaction Hash Calculation
+================================================================================
+
+Transaction CBOR (hex):
+84a8008482582003c5d1951fa6e1aa9f6d41dcee053d9e031487f1156eabb1...
+
+Transaction CBOR Size: 2847 bytes
+
+Transaction Hash:
+ae2210f94144e2f650adeecfde1c7df0131925cf865a858d9ee2137296f3e334
+
+================================================================================
+```
+
+#### Use Cases
+
+- Verify transaction IDs after transaction construction
+- Calculate tx hash for transactions from blockchain explorers
+- Debug transaction building issues
+- Verify transaction identity before submission
+- Calculate transaction hashes for unsigned transactions
+- Validate transaction CBOR from external sources
+
+#### Technical Notes
+
+The transaction hash is calculated by:
+1. Extracting the transaction body from the CBOR structure
+2. Computing Blake2b-256 hash of the transaction body
+3. Returning the hash as a hexadecimal string
+
+This follows the Cardano ledger specification for transaction identification.
+
+#### Error Handling
+
+If the CBOR is invalid:
+
+```
+Error: Failed to calculate transaction hash
+Reason: Invalid transaction CBOR structure
+```
+
+Common issues:
+- Malformed CBOR hex string
+- Non-hex characters in input
+- Invalid transaction structure
+- Incomplete transaction data
 
 ---
 
