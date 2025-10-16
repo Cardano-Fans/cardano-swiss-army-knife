@@ -83,8 +83,12 @@ graalvmNative {
             buildArgs.add("-H:+ReportExceptionStackTraces")
             buildArgs.add("--initialize-at-build-time=kotlin")
 
-            // Include resources from dependencies (genesis files)
+            // Include resources from dependencies (genesis files and reflection configs)
             buildArgs.add("-H:IncludeResources=genesis-files/.*\\.json")
+            buildArgs.add("-H:IncludeResources=META-INF/native-image/.*\\.json")
+
+            // Jackson support for GraalVM
+            buildArgs.add("--initialize-at-build-time=com.fasterxml.jackson")
 
             // Enable optimization
             buildArgs.add("-O3")
