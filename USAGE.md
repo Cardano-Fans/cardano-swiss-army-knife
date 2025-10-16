@@ -14,6 +14,7 @@ This guide provides detailed usage examples for all `csak` commands.
   - [CIP-30 Signature Verification](#cip-30-signature-verification)
 - [Transaction Operations](#transaction-operations)
   - [Transaction Hash Calculation](#transaction-hash-calculation)
+  - [Transaction Decoding](#transaction-decoding)
 - [Time & Epoch Conversions](#time--epoch-conversions)
   - [Epoch to Time Conversion](#epoch-to-time-conversion)
   - [Time to Epoch Conversion](#time-to-epoch-conversion)
@@ -654,6 +655,243 @@ Common issues:
 - Non-hex characters in input
 - Invalid transaction structure
 - Incomplete transaction data
+
+---
+
+### Transaction Decoding
+
+Deserialize transaction CBOR bytes and display the transaction structure as formatted JSON. This is essential for inspecting transaction details, debugging, and understanding transaction structure.
+
+#### Command
+
+```bash
+csak tx-decode <TX_CBOR>
+```
+
+#### Options
+
+- `-h, --help` - Show help message
+
+#### Parameters
+
+- `<TX_CBOR>` - Transaction CBOR bytes in hexadecimal format (whitespace is automatically removed)
+
+#### Examples
+
+##### Decode a transaction from CBOR
+
+```bash
+# Example with a simple transaction
+csak tx-decode 84a40081825820d82e82776b53c1d6dfd1fcd3edd0df5ab72b35650044f155ac9f45e045f0adec00018182581d6148d28ab9e8b9cdbe79b63ce5c6f5eb60a42c9869d11e28d9bb0a22a01a000f4240021a0002a389031a04d8b5d0a100818258203f89ee3d0e7db26dcdfe5c6809dd0ce35e1b5bf7d8d1b3d6e8889ab4a0e32e8258401e4ba0b4ee65b332efecb32b8d5c7c5cb59c6c5fe29a2f33f735654d1b28d6efc1a53feb6b27a64b7f0f8a26154c2e9f41db45f06c12cf8a6a8a2d1df3e950eef5f6
+```
+
+##### With whitespace (automatically cleaned)
+
+```bash
+# Whitespace in the CBOR string is automatically removed
+csak tx-decode "84a400 8182 5820 d82e..."
+```
+
+#### Output Example
+
+```
+================================================================================
+Transaction Decoded from CBOR
+================================================================================
+
+Transaction CBOR Size: 197 bytes
+
+Transaction JSON:
+{
+  "era" : null,
+  "body" : {
+    "inputs" : [ {
+      "transactionId" : "d82e82776b53c1d6dfd1fcd3edd0df5ab72b35650044f155ac9f45e045f0adec",
+      "index" : 0
+    } ],
+    "outputs" : [ {
+      "address" : "addr1v9yd9z4eazuum0nekc7wt3h4ads2gtycd8g3u2xehv9z9gq5heenf",
+      "value" : {
+        "coin" : 1000000,
+        "multiAssets" : [ ],
+        "zero" : false,
+        "positive" : true
+      },
+      "datumHash" : null,
+      "inlineDatum" : null,
+      "scriptRef" : null
+    } ],
+    "fee" : 172937,
+    "ttl" : 81311184,
+    "certs" : [ ],
+    "withdrawals" : [ ],
+    "update" : null,
+    "auxiliaryDataHash" : null,
+    "validityStartInterval" : 0,
+    "mint" : [ ],
+    "scriptDataHash" : null,
+    "collateral" : [ ],
+    "requiredSigners" : [ ],
+    "networkId" : null,
+    "collateralReturn" : null,
+    "totalCollateral" : null,
+    "referenceInputs" : [ ],
+    "votingProcedures" : null,
+    "proposalProcedures" : null,
+    "currentTreasuryValue" : null,
+    "donation" : null
+  },
+  "witnessSet" : {
+    "vkeyWitnesses" : [ {
+      "vkey" : "P4nuPQ59sm3N/lxoCd0M414bW/fY0bPW6IiatKDjLoI=",
+      "signature" : "HkugtO5lszLv7LMrjVx8XLWcbF/imi8z9zVlTRso1u/BpT/rayemS38PiiYVTC6fQdtF8GwSz4pqii0d8+lQ7g=="
+    } ],
+    "nativeScripts" : null,
+    "bootstrapWitnesses" : null,
+    "plutusV1Scripts" : null,
+    "plutusDataList" : null,
+    "redeemers" : null,
+    "plutusV2Scripts" : null,
+    "plutusV3Scripts" : null
+  },
+  "auxiliaryData" : null,
+  "valid" : true
+}
+
+================================================================================
+```
+
+#### JSON Structure
+
+The decoded JSON contains the complete transaction structure:
+
+**Transaction Level:**
+- `era`: The ledger era (Byron, Shelley, Allegra, Mary, Alonzo, Babbage, Conway)
+- `body`: Transaction body with all transaction details
+- `witnessSet`: Signatures and other witnesses
+- `auxiliaryData`: Metadata and scripts
+- `valid`: Transaction validity flag (true for valid transactions)
+
+**Transaction Body:**
+- `inputs`: Transaction inputs (UTXOs being spent)
+- `outputs`: Transaction outputs (new UTXOs created)
+- `fee`: Transaction fee in lovelace
+- `ttl`: Time-to-live (absolute slot number)
+- `certs`: Stake pool certificates and delegation certificates
+- `withdrawals`: Staking reward withdrawals
+- `mint`: Native tokens minted/burned
+- `scriptDataHash`: Hash of Plutus script data
+- `collateral`: Collateral inputs for Plutus scripts
+- `requiredSigners`: Required signatories for scripts
+- `referenceInputs`: Reference inputs (Babbage+)
+- `votingProcedures`: Governance votes (Conway+)
+- `proposalProcedures`: Governance proposals (Conway+)
+
+**Witness Set:**
+- `vkeyWitnesses`: Verification key witnesses (signatures)
+- `nativeScripts`: Native scripts
+- `bootstrapWitnesses`: Byron-era bootstrap witnesses
+- `plutusV1Scripts`: Plutus V1 scripts
+- `plutusV2Scripts`: Plutus V2 scripts (Babbage+)
+- `plutusV3Scripts`: Plutus V3 scripts (Conway+)
+- `plutusDataList`: Plutus data (datums and redeemers)
+- `redeemers`: Plutus script redeemers
+
+#### Use Cases
+
+- **Transaction Inspection**: Examine transaction details before or after submission
+- **Debugging**: Debug transaction construction issues
+- **Analysis**: Analyze transaction structure for auditing or research
+- **Verification**: Verify transaction contents match expectations
+- **Learning**: Understand Cardano transaction structure
+- **Integration**: Parse transactions from blockchain explorers
+- **Development**: Test transaction serialization/deserialization
+- **Plutus Scripts**: Inspect script execution details
+- **Metadata Analysis**: Extract and analyze transaction metadata
+- **Governance**: Inspect voting and proposal procedures (Conway era)
+
+#### Working with Different Eras
+
+The decoder automatically handles transactions from all Cardano eras:
+
+- **Byron**: Legacy bootstrap addresses and witnesses
+- **Shelley**: Stake pool operations and delegation
+- **Allegra**: Token locking (timelock scripts)
+- **Mary**: Multi-asset support (native tokens)
+- **Alonzo**: Plutus V1 smart contracts
+- **Babbage**: Plutus V2, reference inputs, inline datums
+- **Conway**: Governance (voting, proposals, constitution)
+
+#### Decoding Complex Transactions
+
+##### Smart Contract Transactions (Plutus)
+
+```bash
+# Decode a Plutus script transaction
+csak tx-decode <plutus_tx_cbor>
+```
+
+The output will include:
+- `plutusDataList`: Datums and redeemers
+- `scriptDataHash`: Hash of script data
+- `collateral`: Collateral inputs
+- `requiredSigners`: Script signatories
+
+##### Multi-Asset Transactions
+
+```bash
+# Decode a native token transaction
+csak tx-decode <token_tx_cbor>
+```
+
+The output will show:
+- `multiAssets`: Token policies and amounts
+- `mint`: Minting/burning operations
+
+##### Metadata Transactions
+
+```bash
+# Decode a transaction with metadata
+csak tx-decode <metadata_tx_cbor>
+```
+
+The `auxiliaryData` field will contain metadata details.
+
+#### Piping with tx-hash
+
+You can combine tx-decode with other commands:
+
+```bash
+# Get both transaction hash and decoded JSON
+csak tx-hash <tx_cbor>
+csak tx-decode <tx_cbor>
+```
+
+#### Error Handling
+
+If the CBOR is invalid:
+
+```
+Error: Failed to deserialize transaction
+Reason: CBOR deserialization failed
+```
+
+Common issues:
+- Malformed CBOR hex string
+- Non-hex characters in input
+- Invalid transaction structure
+- Incomplete transaction data
+- Unsupported era format
+
+#### Technical Notes
+
+The transaction decoder:
+1. Parses the CBOR structure using cardano-client-lib
+2. Deserializes into a Transaction object
+3. Converts to JSON using Jackson serialization
+4. Pretty-prints the output for readability
+
+Binary data (signatures, keys, hashes) is encoded as Base64 in the JSON output for compactness.
 
 ---
 
@@ -1573,6 +1811,10 @@ csak private-to-public-key --help
 csak blake2b-hash --help
 csak cip30-sign --help
 csak cip30-verify --help
+
+# Transaction Operations
+csak tx-hash --help
+csak tx-decode --help
 
 # Time & Epoch Conversions
 csak conversion-epoch-to-time --help

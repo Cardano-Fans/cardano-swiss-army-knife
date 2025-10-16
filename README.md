@@ -32,6 +32,7 @@ A command-line tool for Cardano utilities built with JDK 24, Kotlin, and GraalVM
 
 ### Transaction Operations
 - `tx-hash` - Calculate transaction hash from transaction CBOR bytes
+- `tx-decode` - Decode transaction CBOR bytes to JSON format
 
 ### Time & Epoch Conversions
 - `conversion-epoch-to-time` - Convert epoch number to UTC time (with start/end)
@@ -129,6 +130,9 @@ cd cardano-swiss-army-knife
 
 # Calculate transaction hash from CBOR
 ./csak tx-hash 84a8008482582003c5d1951fa6e1aa...
+
+# Decode transaction from CBOR to JSON
+./csak tx-decode 84a40081825820d82e82776b53c1d6...
 
 # Convert string to hex
 ./csak util-string-to-hex "Hello Cardano"
