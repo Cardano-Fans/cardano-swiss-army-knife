@@ -29,6 +29,9 @@ dependencies {
     // CIP-30 Data Signature Parser
     implementation("org.cardanofoundation:cip30-data-signature-parser:0.0.12")
 
+    // Cardano Conversions Library (epoch, slot, time conversions)
+    implementation("org.cardanofoundation:cf-cardano-conversions-java:1.2.0")
+
     // SLF4J logging
     implementation("org.slf4j:slf4j-api:2.0.16")
     implementation("org.slf4j:slf4j-simple:2.0.16")
@@ -79,6 +82,9 @@ graalvmNative {
             buildArgs.add("--no-fallback")
             buildArgs.add("-H:+ReportExceptionStackTraces")
             buildArgs.add("--initialize-at-build-time=kotlin")
+
+            // Include resources from dependencies (genesis files)
+            buildArgs.add("-H:IncludeResources=genesis-files/.*\\.json")
 
             // Enable optimization
             buildArgs.add("-O3")

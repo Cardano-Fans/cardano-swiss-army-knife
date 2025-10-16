@@ -12,13 +12,20 @@ import kotlin.system.exitProcess
         "Cardano Swiss Army Knife - A collection of useful Cardano tools.",
         "",
         "Available commands:",
-        "  hd-wallet-generate     - Generate HD wallet with derivation paths",
-        "  hd-wallet-restore      - Restore HD wallet from 15 or 24-word mnemonic",
-        "  private-to-public-key  - Extract public key and address from private key",
-        "  blake2b-hash           - Calculate Blake2b hashes from hex string",
-        "  string-to-hex          - Convert a string to hex format",
-        "  hex-to-string          - Convert a hex string to UTF-8 format",
-        "  cip30-verify           - Verify and parse CIP-30 data signatures",
+        "  hd-wallet-generate         - Generate HD wallet with derivation paths",
+        "  hd-wallet-restore          - Restore HD wallet from 15 or 24-word mnemonic",
+        "  private-to-public-key      - Extract public key and address from private key",
+        "  blake2b-hash               - Calculate Blake2b hashes from hex string",
+        "  string-to-hex              - Convert a string to hex format",
+        "  hex-to-string              - Convert a hex string to UTF-8 format",
+        "  cip30-verify               - Verify and parse CIP-30 data signatures",
+        "  conversion-epoch-to-time   - Convert epoch number to UTC time",
+        "  conversion-time-to-epoch   - Convert UTC time to epoch number",
+        "  conversion-slot-to-time    - Convert slot number to UTC time",
+        "  conversion-time-to-slot    - Convert UTC time to slot number",
+        "  conversion-slot-to-epoch   - Convert slot number to epoch number",
+        "  conversion-epoch-to-slot   - Convert epoch number to slot number",
+        "  cardano-hardforks          - Display Cardano hard forks and era transitions",
         "",
         "Use '<command> --help' for more information about a command."
     ],
@@ -29,7 +36,14 @@ import kotlin.system.exitProcess
         Blake2bHashCommand::class,
         StringToHexCommand::class,
         HexToStringCommand::class,
-        Cip30VerifyCommand::class
+        Cip30VerifyCommand::class,
+        ConversionEpochToTimeCommand::class,
+        ConversionTimeToEpochCommand::class,
+        ConversionSlotToTimeCommand::class,
+        ConversionTimeToSlotCommand::class,
+        ConversionSlotToEpochCommand::class,
+        ConversionEpochToSlotCommand::class,
+        CardanoHardforksCommand::class
     ]
 )
 class CsakCLI : Runnable {
