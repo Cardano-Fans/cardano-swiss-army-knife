@@ -13,17 +13,21 @@ import kotlin.system.exitProcess
         "",
         "Available commands:",
         "  hd-wallet-generate     - Generate HD wallet with derivation paths",
+        "  hd-wallet-restore      - Restore HD wallet from 15 or 24-word mnemonic",
         "  private-to-public-key  - Extract public key and address from private key",
         "  blake2b-hash           - Calculate Blake2b hashes from hex string",
         "  string-to-hex          - Convert a string to hex format",
+        "  hex-to-string          - Convert a hex string to UTF-8 format",
         "",
         "Use '<command> --help' for more information about a command."
     ],
     subcommands = [
         HdWalletGenerateCommand::class,
+        HdWalletRestoreCommand::class,
         PrivateToPublicKeyCommand::class,
         Blake2bHashCommand::class,
-        StringToHexCommand::class
+        StringToHexCommand::class,
+        HexToStringCommand::class
     ]
 )
 class CsakCLI : Runnable {
