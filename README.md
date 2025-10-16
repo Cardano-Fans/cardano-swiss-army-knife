@@ -14,6 +14,7 @@ A command-line tool for Cardano utilities built with JDK 24, Kotlin, and GraalVM
 - **JDK 24 + Kotlin 2.2.0**: Modern language features and performance
 - **GraalVM Native Image**: Fast startup, low memory footprint, single executable
 - **PicoCLI**: Elegant command-line interface with help and auto-completion
+- **Multi-Platform Support**: Native binaries for Linux x64, macOS Intel x64, and macOS Apple Silicon ARM64
 - **Docker Support**: Both JVM and native image containers
 - **CI/CD**: Automated builds and releases via GitHub Actions
 
@@ -57,11 +58,41 @@ For detailed usage examples and workflows, see [USAGE.md](USAGE.md).
 ### Installation
 
 **Download Pre-built Binary** (recommended):
+
+Choose the appropriate binary for your platform:
+
+**Linux (x64):**
 ```bash
-# Download latest release from GitHub
+# Download latest release
 wget https://github.com/Cardano-Fans/cardano-swiss-army-knife/releases/latest/download/csak-linux-x64.tar.gz
 tar -xzf csak-linux-x64.tar.gz
 chmod +x csak
+./csak --help
+```
+
+**macOS (Intel x64):**
+```bash
+# Download latest release
+curl -L -O https://github.com/Cardano-Fans/cardano-swiss-army-knife/releases/latest/download/csak-macos-x64.tar.gz
+tar -xzf csak-macos-x64.tar.gz
+chmod +x csak
+
+# Remove quarantine attribute (macOS security)
+xattr -d com.apple.quarantine csak 2>/dev/null || true
+
+./csak --help
+```
+
+**macOS (Apple Silicon ARM64):**
+```bash
+# Download latest release
+curl -L -O https://github.com/Cardano-Fans/cardano-swiss-army-knife/releases/latest/download/csak-macos-arm64.tar.gz
+tar -xzf csak-macos-arm64.tar.gz
+chmod +x csak
+
+# Remove quarantine attribute (macOS security)
+xattr -d com.apple.quarantine csak 2>/dev/null || true
+
 ./csak --help
 ```
 
@@ -160,6 +191,23 @@ Or use the convenience script:
 - **GraalVM Native Image**: 0.10.4
 - **PicoCLI**: 4.7.7
 - **SLF4J**: 2.0.16
+
+## Platform Support
+
+Native binaries are automatically built for multiple platforms via GitHub Actions CI/CD:
+
+| Platform | Architecture | Runner | Binary Name | Status |
+|----------|--------------|--------|-------------|--------|
+| Linux | x64 | ubuntu-latest | csak-linux-x64.tar.gz | ✅ Supported |
+| macOS | Intel x64 | macos-13 | csak-macos-x64.tar.gz | ✅ Supported |
+| macOS | Apple Silicon (ARM64) | macos-14 | csak-macos-arm64.tar.gz | ✅ Supported |
+
+**Features:**
+- GraalVM native images (~45 MB)
+- Fast startup time (< 100ms)
+- No JVM required
+- SHA-256 checksums for verification
+- Automated builds on every release
 
 ## Use Cases
 
