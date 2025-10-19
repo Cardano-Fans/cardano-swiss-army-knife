@@ -56,5 +56,5 @@ CMD ["--help"]
 
 # Metadata
 LABEL maintainer="Cardano Swiss Army Knife"
-LABEL version="1.0.0"
+LABEL version="0.1.0"
 LABEL description="Cardano Swiss Army Knife - GraalVM Native Image"

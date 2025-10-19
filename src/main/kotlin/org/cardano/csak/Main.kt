@@ -7,7 +7,7 @@ import kotlin.system.exitProcess
 @Command(
     name = "csak",
     mixinStandardHelpOptions = true,
-    version = ["csak 1.0.0"],
+    version = ["csak 0.1.0"],
     description = [
         "Cardano Swiss Army Knife - A collection of useful Cardano tools.",
         "",
