@@ -21,9 +21,16 @@ class Cip30SignCommand : Callable<Int> {
 
     @Parameters(
         index = "0",
-        description = ["Message to sign (UTF-8 string)"]
+        description = ["Message to sign (UTF-8 string or hex string, see --message-format)"]
     )
     private lateinit var message: String
+
+    @Option(
+        names = ["--message-format"],
+        description = ["Message input format: text (UTF-8 string, default), hex (hexadecimal string)"],
+        defaultValue = "text"
+    )
+    private var messageFormat: String = "text"
 
     @Parameters(
         index = "1",
@@ -136,8 +143,23 @@ class Cip30SignCommand : Callable<Int> {
                 address = Address(addressStr)
 
                 // For signing with raw keys, we'll use the signData method directly
-                // Convert message to bytes
-                val payload = message.toByteArray(Charsets.UTF_8)
+                // Convert message to bytes based on format
+                val payload = when (messageFormat.lowercase()) {
+                    "hex" -> {
+                        try {
+                            HexUtil.decodeHexString(message.replace("\\s".toRegex(), ""))
+                        } catch (e: Exception) {
+                            println("Error: Invalid hex format in message")
+                            println("Reason: ${e.message}")
+                            return 1
+                        }
+                    }
+                    "text" -> message.toByteArray(Charsets.UTF_8)
+                    else -> {
+                        println("Error: Invalid message format. Use 'text' or 'hex'")
+                        return 1
+                    }
+                }
 
                 // Sign directly with keys
                 val dataSignature: DataSignature = try {
@@ -160,9 +182,13 @@ class Cip30SignCommand : Callable<Int> {
                 println("CIP-30 Data Signature")
                 println("=".repeat(80))
                 println()
-                println("Message:")
-                println(message)
+                println("Message Input Format: ${messageFormat.uppercase()}")
                 println()
+                if (messageFormat.lowercase() == "text") {
+                    println("Message (text):")
+                    println(message)
+                    println()
+                }
                 println("Message (hex):")
                 println(HexUtil.encodeHexString(payload))
                 println()
@@ -195,8 +221,23 @@ class Cip30SignCommand : Callable<Int> {
                 return 0
             }
 
-            // Convert message to bytes
-            val payload = message.toByteArray(Charsets.UTF_8)
+            // Convert message to bytes based on format
+            val payload = when (messageFormat.lowercase()) {
+                "hex" -> {
+                    try {
+                        HexUtil.decodeHexString(message.replace("\\s".toRegex(), ""))
+                    } catch (e: Exception) {
+                        println("Error: Invalid hex format in message")
+                        println("Reason: ${e.message}")
+                        return 1
+                    }
+                }
+                "text" -> message.toByteArray(Charsets.UTF_8)
+                else -> {
+                    println("Error: Invalid message format. Use 'text' or 'hex'")
+                    return 1
+                }
+            }
 
             // Sign the data
             val dataSignature: DataSignature = try {
@@ -218,9 +259,13 @@ class Cip30SignCommand : Callable<Int> {
             println("CIP-30 Data Signature")
             println("=".repeat(80))
             println()
-            println("Message:")
-            println(message)
+            println("Message Input Format: ${messageFormat.uppercase()}")
             println()
+            if (messageFormat.lowercase() == "text") {
+                println("Message (text):")
+                println(message)
+                println()
+            }
             println("Message (hex):")
             println(HexUtil.encodeHexString(payload))
             println()

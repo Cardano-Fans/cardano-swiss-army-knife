@@ -9,20 +9,42 @@ import java.util.concurrent.Callable
 @Command(
     name = "blake2b-hash",
     mixinStandardHelpOptions = true,
-    description = ["Calculate Blake2b hashes (160, 224, 256) from a hex string"]
+    description = ["Calculate Blake2b hashes (160, 224, 256) from input data"]
 )
 class Blake2bHashCommand : Callable<Int> {
 
     @Parameters(
         index = "0",
-        description = ["Input data as hex string"]
+        description = ["Input data (hex string or UTF-8 text, see --input-format)"]
     )
-    private lateinit var inputHex: String
+    private lateinit var input: String
+
+    @picocli.CommandLine.Option(
+        names = ["--input-format"],
+        description = ["Input format: hex (hexadecimal string, default), text (UTF-8 string)"],
+        defaultValue = "hex"
+    )
+    private var inputFormat: String = "hex"
 
     override fun call(): Int {
         try {
-            // Decode hex string to bytes
-            val inputBytes = HexUtil.decodeHexString(inputHex)
+            // Convert input to bytes based on format
+            val inputBytes = when (inputFormat.lowercase()) {
+                "hex" -> {
+                    try {
+                        HexUtil.decodeHexString(input.replace("\\s".toRegex(), ""))
+                    } catch (e: Exception) {
+                        println("Error: Invalid hex format in input")
+                        println("Reason: ${e.message}")
+                        return 1
+                    }
+                }
+                "text" -> input.toByteArray(Charsets.UTF_8)
+                else -> {
+                    println("Error: Invalid input format. Use 'hex' or 'text'")
+                    return 1
+                }
+            }
 
             // Calculate Blake2b hashes
             val blake2b160 = Blake2bUtil.blake2bHash160(inputBytes)
@@ -39,8 +61,17 @@ class Blake2bHashCommand : Callable<Int> {
             println("Blake2b Hash Results")
             println("=".repeat(80))
             println()
+            println("Input Format: ${inputFormat.uppercase()}")
+            println()
+            if (inputFormat.lowercase() == "text") {
+                println("Input (text):")
+                println(input)
+                println()
+            }
             println("Input (hex):")
-            println(inputHex)
+            println(HexUtil.encodeHexString(inputBytes))
+            println()
+            println("Input Size: ${inputBytes.size} bytes")
             println()
             println("Blake2b-160 (20 bytes):")
             println(blake2b160Hex)
