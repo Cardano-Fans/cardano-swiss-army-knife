@@ -25,7 +25,7 @@ class HdWalletRestoreCommand : Callable<Int> {
 
     @Option(
         names = ["-n", "--network"],
-        description = ["Network type: mainnet (default), testnet"],
+        description = ["Network type: mainnet (default), preprod, preview"],
         defaultValue = "mainnet"
     )
     private var network: String = "mainnet"
@@ -57,10 +57,11 @@ class HdWalletRestoreCommand : Callable<Int> {
         // Try to create account with the mnemonic
         val account = try {
             when (network.lowercase()) {
-                "testnet" -> Account(Networks.testnet(), mnemonic)
                 "mainnet" -> Account(Networks.mainnet(), mnemonic)
+                "preprod" -> Account(Networks.preprod(), mnemonic)
+                "preview" -> Account(Networks.preview(), mnemonic)
                 else -> {
-                    println("Error: Invalid network. Use 'mainnet' or 'testnet'")
+                    println("Error: Invalid network. Use 'mainnet', 'preprod', or 'preview'")
                     return 1
                 }
             }
@@ -99,7 +100,9 @@ class HdWalletRestoreCommand : Callable<Int> {
                 account
             } else {
                 val networkObj = when (network.lowercase()) {
-                    "testnet" -> Networks.testnet()
+                    "mainnet" -> Networks.mainnet()
+                    "preprod" -> Networks.preprod()
+                    "preview" -> Networks.preview()
                     else -> Networks.mainnet()
                 }
                 Account(networkObj, mnemonic, index)

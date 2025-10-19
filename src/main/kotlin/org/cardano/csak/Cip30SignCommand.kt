@@ -40,7 +40,7 @@ class Cip30SignCommand : Callable<Int> {
 
     @Option(
         names = ["-n", "--network"],
-        description = ["Network type: mainnet (default), testnet, preprod, preview"],
+        description = ["Network type: mainnet (default), preprod, preview"],
         defaultValue = "mainnet"
     )
     private var network: String = "mainnet"
@@ -63,11 +63,10 @@ class Cip30SignCommand : Callable<Int> {
             // Parse network type
             val networkObj = when (network.lowercase()) {
                 "mainnet" -> Networks.mainnet()
-                "testnet" -> Networks.testnet()
                 "preprod" -> Networks.preprod()
                 "preview" -> Networks.preview()
                 else -> {
-                    println("Error: Invalid network. Use 'mainnet', 'testnet', 'preprod', or 'preview'")
+                    println("Error: Invalid network. Use 'mainnet', 'preprod', or 'preview'")
                     return 1
                 }
             }

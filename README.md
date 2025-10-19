@@ -113,14 +113,14 @@ cd cardano-swiss-army-knife
 ### Quick Examples
 
 ```bash
-# Generate a testnet HD wallet (single account)
-./csak hd-wallet-generate --network testnet
+# Generate a preprod HD wallet (single account)
+./csak hd-wallet-generate --network preprod
 
 # Generate mainnet wallet with 5 derivation paths
 ./csak hd-wallet-generate --network mainnet --count 5
 
 # Convert private key to public key (CBOR format)
-./csak private-to-public-key 5840... --network testnet
+./csak private-to-public-key 5840... --network preprod
 
 # Convert private key to public key (plain hex format)
 ./csak private-to-public-key <64-byte-hex> --format hex --network mainnet
@@ -148,14 +148,14 @@ See [USAGE.md](USAGE.md) for comprehensive examples and workflows.
 Run in JVM mode for fast iteration:
 ```bash
 ./gradlew run --args="--help"
-./gradlew run --args="hd-wallet-generate -n testnet"
+./gradlew run --args="hd-wallet-generate -n preprod"
 ./gradlew run --args="private-to-public-key <key> -f hex"
 ```
 
 Or use the convenience script:
 ```bash
 ./run.sh --help
-./run.sh hd-wallet-generate --network testnet
+./run.sh hd-wallet-generate --network preprod
 ```
 
 ## Build Targets
@@ -231,14 +231,14 @@ Native binaries are automatically built for multiple platforms via GitHub Action
 - Verify hashes and addresses
 
 ### Development & Testing
-- Quick wallet generation for testnet development
+- Quick wallet generation for testing (preprod/preview networks)
 - Script-friendly output for automation
 - Educational tool for understanding HD wallets
 
 ## Security Considerations
 
 - **Never share private keys or mnemonics** - Anyone with access can control your funds
-- **Use testnet for testing** - Always test with `--network testnet` before mainnet
+- **Use test networks for testing** - Always test with `--network preprod` or `--network preview` before mainnet
 - **Secure storage** - Store mnemonics in encrypted vaults or hardware wallets
 - **Verify addresses** - Always verify generated addresses before sending funds
 

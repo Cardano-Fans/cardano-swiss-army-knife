@@ -17,7 +17,7 @@ class HdWalletGenerateCommand : Callable<Int> {
 
     @Option(
         names = ["-n", "--network"],
-        description = ["Network type: mainnet (default), testnet"],
+        description = ["Network type: mainnet (default), preprod, preview"],
         defaultValue = "mainnet"
     )
     private var network: String = "mainnet"
@@ -37,10 +37,11 @@ class HdWalletGenerateCommand : Callable<Int> {
         }
         // Create account based on network
         val account = when (network.lowercase()) {
-            "testnet" -> Account(Networks.testnet())
             "mainnet" -> Account(Networks.mainnet())
+            "preprod" -> Account(Networks.preprod())
+            "preview" -> Account(Networks.preview())
             else -> {
-                println("Error: Invalid network. Use 'mainnet' or 'testnet'")
+                println("Error: Invalid network. Use 'mainnet', 'preprod', or 'preview'")
                 return 1
             }
         }

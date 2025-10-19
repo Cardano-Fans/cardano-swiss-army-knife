@@ -27,7 +27,7 @@ class PrivateToPublicKeyCommand : Callable<Int> {
 
     @Option(
         names = ["-n", "--network"],
-        description = ["Network type: mainnet (default), testnet"],
+        description = ["Network type: mainnet (default), preprod, preview"],
         defaultValue = "mainnet"
     )
     private var network: String = "mainnet"
@@ -41,12 +41,13 @@ class PrivateToPublicKeyCommand : Callable<Int> {
 
     override fun call(): Int {
         try {
-            // Determine if mainnet
-            val isMainnet = when (network.lowercase()) {
-                "testnet" -> false
-                "mainnet" -> true
+            // Get network object
+            val networkObj = when (network.lowercase()) {
+                "mainnet" -> Networks.mainnet()
+                "preprod" -> Networks.preprod()
+                "preview" -> Networks.preview()
                 else -> {
-                    println("Error: Invalid network. Use 'mainnet' or 'testnet'")
+                    println("Error: Invalid network. Use 'mainnet', 'preprod', or 'preview'")
                     return 1
                 }
             }
@@ -81,7 +82,7 @@ class PrivateToPublicKeyCommand : Callable<Int> {
 
             val address = AddressProvider.getEntAddress(
                 hdPublicKey,
-                if (isMainnet) Networks.mainnet() else Networks.testnet()
+                networkObj
             )
             val addressBech32 = address.toBech32()
 

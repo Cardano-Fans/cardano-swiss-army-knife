@@ -48,7 +48,7 @@ csak hd-wallet-generate [OPTIONS]
 
 ##### Options
 
-- `-n, --network <NETWORK>` - Network type: `mainnet` (default) or `testnet`
+- `-n, --network <NETWORK>` - Network type: `mainnet` (default), `preprod`, or `preview`
 - `-c, --count <COUNT>` - Number of derivation paths to generate (default: 1)
 - `-h, --help` - Show help message
 - `-V, --version` - Show version
@@ -58,7 +58,7 @@ csak hd-wallet-generate [OPTIONS]
 ##### Generate a single wallet (default)
 
 ```bash
-csak hd-wallet-generate --network testnet
+csak hd-wallet-generate --network preprod
 ```
 
 Output includes:
@@ -76,7 +76,7 @@ Output includes:
 csak hd-wallet-generate --network mainnet --count 5
 
 # Short form
-csak hd-wallet-generate -n testnet -c 10
+csak hd-wallet-generate -n preprod -c 10
 ```
 
 This generates accounts at indices 0-4 (or 0-9), each with their own:
@@ -91,7 +91,7 @@ This generates accounts at indices 0-4 (or 0-9), each with their own:
 Cardano HD Wallet Generated
 ================================================================================
 
-Network: TESTNET
+Network: PREPROD
 
 Mnemonic (24 words):
 --------------------------------------------------------------------------------
@@ -142,7 +142,7 @@ csak hd-wallet-restore [OPTIONS] <MNEMONIC_WORDS>
 
 ##### Options
 
-- `-n, --network <NETWORK>` - Network type: `mainnet` (default) or `testnet`
+- `-n, --network <NETWORK>` - Network type: `mainnet` (default), `preprod`, or `preview`
 - `-i, --index <INDEX>` - Account index to restore (default: 0)
 - `-h, --help` - Show help message
 
@@ -151,7 +151,7 @@ csak hd-wallet-restore [OPTIONS] <MNEMONIC_WORDS>
 ##### Restore a 24-word wallet
 
 ```bash
-csak hd-wallet-restore --network testnet word1 word2 word3 ... word24
+csak hd-wallet-restore --network preprod word1 word2 word3 ... word24
 ```
 
 ##### Restore a 15-word wallet
@@ -164,7 +164,7 @@ csak hd-wallet-restore --network mainnet word1 word2 word3 ... word15
 
 ```bash
 # Restore account at index 5
-csak hd-wallet-restore -n testnet -i 5 word1 word2 ... word24
+csak hd-wallet-restore -n preprod -i 5 word1 word2 ... word24
 ```
 
 ##### Output Example
@@ -174,7 +174,7 @@ csak hd-wallet-restore -n testnet -i 5 word1 word2 ... word24
 HD Wallet Restored
 ================================================================================
 
-Network: TESTNET
+Network: PREPROD
 Mnemonic Word Count: 24
 Account Index: 0
 
@@ -243,7 +243,7 @@ csak private-to-public-key [OPTIONS] <PRIVATE_KEY>
 
 #### Options
 
-- `-n, --network <NETWORK>` - Network type: `mainnet` (default) or `testnet`
+- `-n, --network <NETWORK>` - Network type: `mainnet` (default), `preprod`, or `preview`
 - `-f, --format <FORMAT>` - Input format: `cbor` (default) or `hex`
 - `-h, --help` - Show help message
 
@@ -253,20 +253,20 @@ csak private-to-public-key [OPTIONS] <PRIVATE_KEY>
 
 ```bash
 # CBOR hex starts with 5840 (64-byte private key)
-csak private-to-public-key 5840884728da33f13706de4d85fd86d3a3e8bcaa1d71547be1a7b0fb9ed346280c44b175e1687b4beb270e89d60616b1d242c20cf96e6695791a7572fb71d5683841 --network testnet
+csak private-to-public-key 5840884728da33f13706de4d85fd86d3a3e8bcaa1d71547be1a7b0fb9ed346280c44b175e1687b4beb270e89d60616b1d242c20cf96e6695791a7572fb71d5683841 --network preprod
 ```
 
 ##### Using plain hex format
 
 ```bash
 # Plain 64-byte hex (128 characters)
-csak private-to-public-key 884728da33f13706de4d85fd86d3a3e8bcaa1d71547be1a7b0fb9ed346280c44b175e1687b4beb270e89d60616b1d242c20cf96e6695791a7572fb71d5683841 --format hex --network testnet
+csak private-to-public-key 884728da33f13706de4d85fd86d3a3e8bcaa1d71547be1a7b0fb9ed346280c44b175e1687b4beb270e89d60616b1d242c20cf96e6695791a7572fb71d5683841 --format hex --network preprod
 ```
 
 ##### Short form
 
 ```bash
-csak private-to-public-key <key> -f hex -n testnet
+csak private-to-public-key <key> -f hex -n preprod
 ```
 
 ##### Output Example
@@ -276,7 +276,7 @@ csak private-to-public-key <key> -f hex -n testnet
 Public Key Extracted from Private Key
 ================================================================================
 
-Network: TESTNET
+Network: PREPROD
 Input Format: CBOR
 
 Private Key (CBOR hex):
@@ -375,7 +375,7 @@ csak cip30-sign [OPTIONS] <MESSAGE> <PRIVATE_KEY>
 
 #### Options
 
-- `-n, --network <NETWORK>` - Network type: `mainnet` (default), `testnet`, `preprod`, `preview`
+- `-n, --network <NETWORK>` - Network type: `mainnet` (default), `preprod`, `preview`
 - `--hashed` - Hash the payload before signing (for hardware wallets like Ledger/Trezor)
 - `-a, --address <ADDRESS>` - Address to use for signing (optional, derived from private key if not provided)
 - `-h, --help` - Show help message
@@ -391,21 +391,21 @@ csak cip30-sign [OPTIONS] <MESSAGE> <PRIVATE_KEY>
 
 ```bash
 # Sign a message with a private key
-csak cip30-sign "Hello Cardano" 884728da33f13706de4d85fd86d3a3e8bcaa1d71547be1a7b0fb9ed346280c44b175e1687b4beb270e89d60616b1d242c20cf96e6695791a7572fb71d5683841 --network testnet
+csak cip30-sign "Hello Cardano" 884728da33f13706de4d85fd86d3a3e8bcaa1d71547be1a7b0fb9ed346280c44b175e1687b4beb270e89d60616b1d242c20cf96e6695791a7572fb71d5683841 --network preprod
 ```
 
 ##### Sign with hardware wallet mode (hashed payload)
 
 ```bash
 # Sign with hashed payload for hardware wallet compatibility
-csak cip30-sign "Hello Cardano" 884728da33f13706de4d85fd86d3a3e8bcaa1d71547be1a7b0fb9ed346280c44b175e1687b4beb270e89d60616b1d242c20cf96e6695791a7572fb71d5683841 --network testnet --hashed
+csak cip30-sign "Hello Cardano" 884728da33f13706de4d85fd86d3a3e8bcaa1d71547be1a7b0fb9ed346280c44b175e1687b4beb270e89d60616b1d242c20cf96e6695791a7572fb71d5683841 --network preprod --hashed
 ```
 
 ##### Sign with specific address
 
 ```bash
 # Use a specific address for signing
-csak cip30-sign "Hello Cardano" <private_key> -a addr_test1qp5umtjq9gg9gw63f50gl3g4m7xk26dl94z2zdtpc7trjp... --network testnet
+csak cip30-sign "Hello Cardano" <private_key> -a addr_test1qp5umtjq9gg9gw63f50gl3g4m7xk26dl94z2zdtpc7trjp... --network preprod
 ```
 
 ##### Output Example
@@ -433,7 +433,7 @@ CIP-30 Signature (hex):
 CIP-30 Key (hex):
 a4010103272006215820097c8507b71063f99e38147f09eacf76f25576a2ddfac2f...
 
-Network: TESTNET
+Network: PREPROD
 
 ================================================================================
 
@@ -1702,12 +1702,12 @@ Common issues:
 
 ```bash
 # Step 1: Generate a wallet
-csak hd-wallet-generate -n testnet > my_wallet.txt
+csak hd-wallet-generate -n preprod > my_wallet.txt
 
 # Step 2: Extract the private key (CBOR format) from output
 
 # Step 3: Verify by deriving public key
-csak private-to-public-key <private_key_cbor> -n testnet
+csak private-to-public-key <private_key_cbor> -n preprod
 
 # The public key and address should match the wallet output
 ```
@@ -1764,7 +1764,7 @@ csak private-to-public-key <5840_prefixed_hex> -f cbor -n mainnet
 ### Security
 
 1. **Never commit private keys or mnemonics to version control**
-2. **Use testnet for testing** - Always test with `--network testnet` first
+2. **Use test networks for testing** - Always test with `--network preprod` first
 3. **Secure storage** - Store mnemonics in encrypted vaults or hardware wallets
 4. **One mnemonic, multiple accounts** - Use derivation paths instead of multiple mnemonics
 
@@ -1784,12 +1784,12 @@ csak private-to-public-key <5840_prefixed_hex> -f cbor -n mainnet
 
 ```bash
 #!/bin/bash
-# Generate a testnet wallet and extract the first address
+# Generate a preprod wallet and extract the first address
 
-OUTPUT=$(csak hd-wallet-generate -n testnet -c 1)
+OUTPUT=$(csak hd-wallet-generate -n preprod -c 1)
 ADDRESS=$(echo "$OUTPUT" | grep "Base Address (Bech32):" -A 1 | tail -1 | xargs)
 
-echo "Generated testnet address: $ADDRESS"
+echo "Generated preprod address: $ADDRESS"
 ```
 
 ---
