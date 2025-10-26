@@ -51,6 +51,20 @@ tasks.test {
     useJUnitPlatform()
 }
 
+// Generate version.properties file with project version
+tasks.register("generateVersionProperties") {
+    val propertiesFile = file("$buildDir/resources/main/version.properties")
+    outputs.file(propertiesFile)
+    doLast {
+        propertiesFile.parentFile.mkdirs()
+        propertiesFile.writeText("version=${project.version}\n")
+    }
+}
+
+tasks.named("processResources") {
+    dependsOn("generateVersionProperties")
+}
+
 kotlin {
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_24)

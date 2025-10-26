@@ -12,6 +12,7 @@ import kotlin.system.exitProcess
         "Cardano Swiss Army Knife - A collection of useful Cardano tools.",
         "",
         "Available commands:",
+        "  version                    - Display version information",
         "  hd-wallet-generate         - Generate HD wallet with derivation paths",
         "  hd-wallet-restore          - Restore HD wallet from 15 or 24-word mnemonic",
         "  private-to-public-key      - Extract public key and address from private key",
@@ -38,6 +39,7 @@ import kotlin.system.exitProcess
         "Use '<command> --help' for more information about a command."
     ],
     subcommands = [
+        VersionCommand::class,
         HdWalletGenerateCommand::class,
         HdWalletRestoreCommand::class,
         PrivateToPublicKeyCommand::class,
