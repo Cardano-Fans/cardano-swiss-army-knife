@@ -15,6 +15,9 @@ This guide provides detailed usage examples for all `csak` commands.
 - [Transaction Operations](#transaction-operations)
   - [Transaction Hash Calculation](#transaction-hash-calculation)
   - [Transaction Decoding](#transaction-decoding)
+- [CBOR & PlutusData Operations](#cbor--plutusdata-operations)
+  - [CBOR to JSON Conversion](#cbor-to-json-conversion)
+  - [Datum to JSON Conversion](#datum-to-json-conversion)
 - [Time & Epoch Conversions](#time--epoch-conversions)
   - [Epoch to Time Conversion](#epoch-to-time-conversion)
   - [Time to Epoch Conversion](#time-to-epoch-conversion)
@@ -892,6 +895,249 @@ The transaction decoder:
 4. Pretty-prints the output for readability
 
 Binary data (signatures, keys, hashes) is encoded as Base64 in the JSON output for compactness.
+
+---
+
+## CBOR & PlutusData Operations
+
+### CBOR to JSON Conversion
+
+Convert general CBOR (Concise Binary Object Representation) hex bytes to JSON format. This is useful for inspecting any CBOR-encoded data structures used in Cardano.
+
+#### Command
+
+```bash
+csak cbor-to-json [OPTIONS] <CBOR_HEX>
+```
+
+#### Options
+
+- `--pretty` - Pretty print the JSON output (default: true)
+- `-h, --help` - Show help message
+
+#### Parameters
+
+- `<CBOR_HEX>` - CBOR data in hexadecimal format (whitespace is automatically removed)
+
+#### Examples
+
+##### Convert CBOR map to JSON
+
+```bash
+# Simple CBOR map: {a: 1, b: [2, 3]}
+csak cbor-to-json "a26161016162820203"
+```
+
+##### With whitespace (automatically cleaned)
+
+```bash
+csak cbor-to-json "a2 6161 01 6162 820203"
+```
+
+#### Output Example
+
+```
+================================================================================
+CBOR to JSON Conversion
+================================================================================
+
+CBOR Size: 9 bytes
+
+{
+  "a" : 1,
+  "b" : [ 2, 3 ]
+}
+
+================================================================================
+```
+
+#### Use Cases
+
+- **Metadata Inspection**: Decode transaction metadata from CBOR
+- **Debugging**: Inspect CBOR structures for debugging
+- **Data Analysis**: Convert blockchain CBOR data to readable JSON
+- **Integration**: Parse CBOR from external sources
+- **Development**: Test CBOR serialization/deserialization
+
+#### Technical Notes
+
+This command uses the `MetadataToJsonNoSchemaConverter` from cardano-client-lib to convert CBOR structures to JSON. It handles:
+- Maps (key-value pairs)
+- Arrays (lists)
+- Numbers (integers)
+- Byte strings (displayed as hex with 0x prefix)
+- Unicode strings
+- Booleans and null values
+
+---
+
+### Datum to JSON Conversion
+
+Convert Cardano PlutusData (smart contract datum) from CBOR format to JSON. PlutusData is the data structure used in Plutus smart contracts on Cardano.
+
+#### Command
+
+```bash
+csak datum-to-json [OPTIONS] <DATUM_HEX>
+```
+
+#### Options
+
+- `-h, --help` - Show help message
+
+#### Parameters
+
+- `<DATUM_HEX>` - Datum CBOR data in hexadecimal format (PlutusData serialized)
+
+#### Examples
+
+##### Example 1: Simple Constructor
+
+```bash
+# Constr 0 [1, 2]
+csak datum-to-json "d8799f0102ff"
+```
+
+##### Example 2: Bytes
+
+```bash
+# Bytes 0xdeadbeef
+csak datum-to-json "44deadbeef"
+```
+
+##### Example 3: List of Integers
+
+```bash
+# List [1, 2, 3]
+csak datum-to-json "9f010203ff"
+```
+
+##### Example 4: Big Integer
+
+```bash
+# Int 1000000000000
+csak datum-to-json "1b000000e8d4a51000"
+```
+
+##### Example 5: Complex Nested Datum
+
+```bash
+# Constr 1 [bytes, int, constructor, list, map]
+csak datum-to-json "d87a9f581cc2ff616e11299d9094ce0a7eb5b7284b705147a822f4ffbd471f971a1b0000017e9874d2a0d8668218829f187b44313233349f040506ffa2014131024132ffff"
+```
+
+#### Output Example
+
+```
+================================================================================
+Datum (PlutusData) to JSON Conversion
+================================================================================
+
+Datum CBOR Size: 6 bytes
+
+Datum Hash:
+3b6ae2922d032a66a7f4bfa8a238c15493e97cbe32e1bbdf19605720b1e5099a
+
+PlutusData JSON:
+{
+  "constructor" : 0,
+  "fields" : [ {
+    "int" : 1
+  }, {
+    "int" : 2
+  } ]
+}
+
+================================================================================
+```
+
+#### PlutusData Types
+
+The JSON output follows Cardano's ScriptDataJsonSchema and can represent:
+
+**Constructor (Tagged Union):**
+```json
+{
+  "constructor": 0,
+  "fields": [...]
+}
+```
+
+**Integer (Arbitrary Precision):**
+```json
+{
+  "int": 42
+}
+```
+
+**Bytes (Hex Encoded):**
+```json
+{
+  "bytes": "deadbeef"
+}
+```
+
+**List (Array):**
+```json
+{
+  "list": [...]
+}
+```
+
+**Map (Key-Value Pairs):**
+```json
+{
+  "map": [
+    {"k": {...}, "v": {...}},
+    ...
+  ]
+}
+```
+
+#### Use Cases
+
+- **Smart Contract Development**: Inspect datum structures for Plutus contracts
+- **Debugging**: Debug smart contract data on-chain
+- **UTXO Analysis**: Analyze datum attached to UTXOs
+- **Integration**: Parse datum from blockchain explorers
+- **Testing**: Verify datum serialization in tests
+- **Hash Calculation**: Calculate datum hash for script validation
+
+#### Datum Hash
+
+The datum hash is automatically calculated and displayed. The Blake2b-256 hash of the datum is used for:
+- Locking UTXOs with datum hash (instead of inline datum)
+- Script validation and reference
+- Datum identification on-chain
+
+#### Technical Notes
+
+This command:
+1. Deserializes PlutusData from CBOR using cardano-client-lib
+2. Converts to JSON using `PlutusDataJsonConverter`
+3. Optionally calculates the datum hash (Blake2b-256 of CBOR bytes)
+
+**Important**: This command expects PlutusData CBOR format. For general CBOR, use `cbor-to-json` instead.
+
+#### Common Datum Patterns
+
+**NFT Metadata (CIP-68):**
+```bash
+# Often contains version, metadata map, and extra data
+csak datum-to-json <cip68_datum_hex>
+```
+
+**Vesting Contract:**
+```bash
+# Typically: Constr with beneficiary, amount, unlock time
+csak datum-to-json <vesting_datum_hex>
+```
+
+**Marketplace Listing:**
+```bash
+# Usually: Constr with seller, price, deadline, metadata
+csak datum-to-json <marketplace_datum_hex>
+```
 
 ---
 
@@ -1815,6 +2061,10 @@ csak cip30-verify --help
 # Transaction Operations
 csak tx-hash --help
 csak tx-decode --help
+
+# CBOR & PlutusData Operations
+csak cbor-to-json --help
+csak datum-to-json --help
 
 # Time & Epoch Conversions
 csak conversion-epoch-to-time --help

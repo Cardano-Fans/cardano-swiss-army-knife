@@ -8,6 +8,8 @@ A command-line tool for Cardano utilities built with JDK 24, Kotlin, and GraalVM
 - **HD Wallet Management**: Generate and restore HD wallets with BIP32/BIP39/CIP-1852 derivation paths
 - **Key Management**: Convert between private and public keys, support for both hex and CBOR formats
 - **Cryptographic Operations**: Blake2b hashing (160, 224, 256-bit) and CIP-30 signature verification
+- **Transaction Operations**: Calculate transaction hashes and decode transaction CBOR to JSON
+- **CBOR & PlutusData**: Convert CBOR to JSON and decode Plutus smart contract datums
 - **Time & Epoch Conversions**: Convert between epochs, slots, and UTC time for all networks
 - **Blockchain Information**: View Cardano eras, hard forks, and network genesis data
 - **Utility Functions**: String/hex conversions and more
@@ -33,6 +35,10 @@ A command-line tool for Cardano utilities built with JDK 24, Kotlin, and GraalVM
 ### Transaction Operations
 - `tx-hash` - Calculate transaction hash from transaction CBOR bytes
 - `tx-decode` - Decode transaction CBOR bytes to JSON format
+
+### CBOR & PlutusData Operations
+- `cbor-to-json` - Convert general CBOR hex bytes to JSON representation
+- `datum-to-json` - Convert Cardano PlutusData (smart contract datum) to JSON format
 
 ### Time & Epoch Conversions
 - `conversion-epoch-to-time` - Convert epoch number to UTC time (with start/end)
@@ -133,6 +139,12 @@ cd cardano-swiss-army-knife
 
 # Decode transaction from CBOR to JSON
 ./csak tx-decode 84a40081825820d82e82776b53c1d6...
+
+# Convert CBOR to JSON
+./csak cbor-to-json "a26161016162820203"
+
+# Convert datum (PlutusData) to JSON (hash shown automatically)
+./csak datum-to-json "d8799f0102ff"
 
 # Convert string to hex
 ./csak util-string-to-hex "Hello Cardano"
