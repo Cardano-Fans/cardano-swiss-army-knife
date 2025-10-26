@@ -53,7 +53,7 @@ tasks.test {
 
 // Generate version.properties file with project version
 tasks.register("generateVersionProperties") {
-    val propertiesFile = file("$buildDir/resources/main/version.properties")
+    val propertiesFile = layout.buildDirectory.file("resources/main/version.properties").get().asFile
     outputs.file(propertiesFile)
     doLast {
         propertiesFile.parentFile.mkdirs()
@@ -100,6 +100,7 @@ graalvmNative {
             // Include resources from dependencies (genesis files and reflection configs)
             buildArgs.add("-H:IncludeResources=genesis-files/.*\\.json")
             buildArgs.add("-H:IncludeResources=META-INF/native-image/.*\\.json")
+            buildArgs.add("-H:IncludeResources=version\\.properties")
 
             // Jackson support for GraalVM
             buildArgs.add("--initialize-at-build-time=com.fasterxml.jackson")
