@@ -66,7 +66,14 @@ csak hd-wallet-generate --network preprod
 
 Output includes:
 - 24-word mnemonic phrase
-- Derivation paths (CIP-1852): `m/1852'/1815'/0'/0/0` (payment), `m/1852'/1815'/0'/2/0` (staking)
+- Wallet type (SOFTWARE with Icarus derivation)
+- All CIP-1852 derivation paths:
+  - `m/1852'/1815'/0'/0/0` - External chain (payment addresses)
+  - `m/1852'/1815'/0'/1/0` - Internal chain (change addresses)
+  - `m/1852'/1815'/0'/2/0` - Staking key
+  - `m/1852'/1815'/0'/3/0` - DRep key (governance)
+  - `m/1852'/1815'/0'/4/0` - Constitutional Committee Cold key
+  - `m/1852'/1815'/0'/5/0` - Constitutional Committee Hot key
 - Base address (Bech32)
 - Stake address (Bech32)
 - Private key (hex and CBOR hex)
@@ -103,9 +110,15 @@ word1 word2 word3 ... word24
 
 Account (index=0):
 --------------------------------------------------------------------------------
+  Wallet Type: SOFTWARE (Icarus derivation)
+
   Derivation Paths (CIP-1852):
-    Payment: m/1852'/1815'/0'/0/0
-    Staking: m/1852'/1815'/0'/2/0
+    External Chain (payment):  m/1852'/1815'/0'/0/0
+    Internal Chain (change):   m/1852'/1815'/0'/1/0
+    Staking Key:                m/1852'/1815'/0'/2/0
+    DRep Key (governance):      m/1852'/1815'/0'/3/0
+    CC Cold Key (governance):   m/1852'/1815'/0'/4/0
+    CC Hot Key (governance):    m/1852'/1815'/0'/5/0
 
   Base Address (Bech32):
     addr_test1qp5umtjq9gg9gw63f50gl3g4m7xk26dl94z2zdtpc7trjp...
@@ -123,6 +136,38 @@ Account (index=0):
   Public Key (CBOR hex):
     58201a9f48df8c097ec07215e5527227d4842a01e434b74982f3582b...
 ```
+
+#### Understanding CIP-1852 Derivation Paths
+
+Cardano uses the CIP-1852 standard for HD wallet derivation with the following structure:
+
+```
+m / purpose' / coin_type' / account' / role / address_index
+```
+
+**Components:**
+- **Purpose**: `1852'` - Cardano-specific (Shelley era)
+- **Coin Type**: `1815'` - Ada (year Ada Lovelace was born)
+- **Account**: `0'`, `1'`, `2'`, etc. - Separate accounts in the same wallet
+- **Role**: Different key types (see below)
+- **Address Index**: Sequential numbering within each role
+
+**Role Types (CIP-1852):**
+
+| Role | Value | Purpose |
+|------|-------|---------|
+| External Chain | 0 | Standard spending/payment addresses |
+| Internal Chain | 1 | Change addresses (wallet-generated) |
+| Staking Key | 2 | Delegation and reward addresses |
+| DRep Key | 3 | Governance voting (CIP-0105) |
+| CC Cold Key | 4 | Constitutional Committee cold keys |
+| CC Hot Key | 5 | Constitutional Committee hot keys |
+
+**Wallet Types:**
+
+Currently, `csak` uses **SOFTWARE** wallets with **Icarus derivation** (the standard Cardano method). This is compatible with most software wallets like Daedalus, Yoroi, and Eternl.
+
+**Note:** Hardware wallets (Ledger, Trezor) use slightly different derivation methods. Support for hardware wallet derivation will be added in a future release when cardano-client-lib 0.7.1+ becomes available.
 
 #### Security Notes
 
@@ -187,9 +232,15 @@ Mnemonic Validation:
 
 Account (index=0):
 --------------------------------------------------------------------------------
+  Wallet Type: SOFTWARE (Icarus derivation)
+
   Derivation Paths (CIP-1852):
-    Payment: m/1852'/1815'/0'/0/0
-    Staking: m/1852'/1815'/0'/2/0
+    External Chain (payment):  m/1852'/1815'/0'/0/0
+    Internal Chain (change):   m/1852'/1815'/0'/1/0
+    Staking Key:                m/1852'/1815'/0'/2/0
+    DRep Key (governance):      m/1852'/1815'/0'/3/0
+    CC Cold Key (governance):   m/1852'/1815'/0'/4/0
+    CC Hot Key (governance):    m/1852'/1815'/0'/5/0
 
   Base Address (Bech32):
     addr_test1qp5umtjq9gg9gw63f50gl3g4m7xk26dl94z2zdtpc7trjp...

@@ -122,8 +122,18 @@ class HdWalletRestoreCommand : Callable<Int> {
 
     private fun displayAccountInfo(account: Account, index: Int) {
         // Cardano derivation paths (CIP-1852)
-        val paymentPath = "m/1852'/1815'/$index'/0/0"
-        val stakingPath = "m/1852'/1815'/$index'/2/0"
+        // Format: m / purpose' / coin_type' / account' / role / address_index
+        val purpose = "1852'"  // CIP-1852 (Shelley)
+        val coinType = "1815'" // Ada (Lovelace's birth year)
+        val accountIndex = "$index'"
+
+        // CIP-1852 Role types
+        val externalPath = "m/$purpose/$coinType/$accountIndex/0/0"  // Payment/External addresses
+        val internalPath = "m/$purpose/$coinType/$accountIndex/1/0"  // Change/Internal addresses
+        val stakingPath = "m/$purpose/$coinType/$accountIndex/2/0"   // Staking key
+        val drepPath = "m/$purpose/$coinType/$accountIndex/3/0"      // DRep key (CIP-0105)
+        val ccColdPath = "m/$purpose/$coinType/$accountIndex/4/0"    // Constitutional Committee Cold
+        val ccHotPath = "m/$purpose/$coinType/$accountIndex/5/0"     // Constitutional Committee Hot
 
         // Get addresses
         val baseAddress = account.baseAddress()
@@ -137,9 +147,15 @@ class HdWalletRestoreCommand : Callable<Int> {
         val privateKeyCborHex = KeyGenCborUtil.bytesToCbor(account.privateKeyBytes())
         val publicKeyCborHex = KeyGenCborUtil.bytesToCbor(account.publicKeyBytes())
 
+        println("  Wallet Type: SOFTWARE (Icarus derivation)")
+        println()
         println("  Derivation Paths (CIP-1852):")
-        println("    Payment: $paymentPath")
-        println("    Staking: $stakingPath")
+        println("    External Chain (payment):  $externalPath")
+        println("    Internal Chain (change):   $internalPath")
+        println("    Staking Key:                $stakingPath")
+        println("    DRep Key (governance):      $drepPath")
+        println("    CC Cold Key (governance):   $ccColdPath")
+        println("    CC Hot Key (governance):    $ccHotPath")
         println()
         println("  Base Address (Bech32):")
         println("    $baseAddress")

@@ -228,9 +228,10 @@ Native binaries are automatically built for multiple platforms via GitHub Action
 ## Use Cases
 
 ### Wallet Management
-- Generate HD wallets for production or testing
+- Generate HD wallets for production or testing (SOFTWARE wallets with Icarus derivation)
 - Derive multiple accounts from a single mnemonic
-- Understand Cardano's CIP-1852 derivation paths
+- Complete CIP-1852 derivation path support (6 role types: external, internal, staking, DRep, CC cold, CC hot)
+- Compatible with Daedalus, Yoroi, Eternl, and other standard Cardano wallets
 
 ### Key Operations
 - Convert between key formats (hex/CBOR)
@@ -278,8 +279,9 @@ Apache License 2.0 - see [LICENSE](LICENSE) for details.
 - [CIP-30 Data Signature Parser](https://github.com/cardano-foundation/CIPs/tree/master/CIP-0030) - Parse and verify CIP-30 wallet message signatures
 
 ### Cardano Standards & Specifications
-- [CIP-1852](https://cips.cardano.org/cips/cip1852/) - HD Wallets for Cardano
+- [CIP-1852](https://cips.cardano.org/cips/cip1852/) - HD Wallets for Cardano (Shelley-era derivation paths)
 - [CIP-30](https://cips.cardano.org/cips/cip30/) - Cardano dApp-Wallet Web Bridge
+- [CIP-105](https://cips.cardano.org/cips/cip105/) - Conway era governance keys (DRep, Constitutional Committee)
 - [BIP32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki) - Hierarchical Deterministic Wallets
 - [BIP39](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki) - Mnemonic Code for Generating Deterministic Keys
 
