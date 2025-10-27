@@ -272,8 +272,16 @@ Apache License 2.0 - see [LICENSE](LICENSE) for details.
 
 ## Resources
 
-- [Cardano Client Library](https://github.com/bloxbean/cardano-client-lib) - Java library for Cardano
+### Libraries
+- [Cardano Client Library](https://github.com/bloxbean/cardano-client-lib) - Java library for Cardano blockchain interactions
+- [Cardano Conversions Library](https://github.com/cardano-foundation/cf-cardano-conversions-java) - Epoch, slot, and time conversions for all Cardano networks
+- [CIP-30 Data Signature Parser](https://github.com/cardano-foundation/CIPs/tree/master/CIP-0030) - Parse and verify CIP-30 wallet message signatures
+
+### Cardano Standards & Specifications
 - [CIP-1852](https://cips.cardano.org/cips/cip1852/) - HD Wallets for Cardano
+- [CIP-30](https://cips.cardano.org/cips/cip30/) - Cardano dApp-Wallet Web Bridge
 - [BIP32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki) - Hierarchical Deterministic Wallets
-- [BIP39](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki) - Mnemonic Code
-- [Blake2b](https://www.blake2.net/) - Cryptographic hash function
+- [BIP39](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki) - Mnemonic Code for Generating Deterministic Keys
+
+### Cryptography
+- [Blake2b](https://www.blake2.net/) - Cryptographic hash function used in Cardano
