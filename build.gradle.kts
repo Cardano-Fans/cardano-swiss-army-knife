@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "org.cardano"
-version = "0.2.0-SNAPSHOT"
+version = "0.2.1"
 
 repositories {
     mavenCentral()
